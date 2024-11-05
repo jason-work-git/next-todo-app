@@ -1,4 +1,3 @@
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -9,24 +8,25 @@ generator client {
 }
 
 model User {
-  id        String      @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
+  id       String  @id @default(uuid())
+  email    String  @unique
+  name     String?
+  password String
 
-  posts     Task[]
+  tasks     Task[]
   createdAt DateTime @default(now())
 }
 
 model Task {
-  id        String      @id @default(uuid())
-  completed Boolean  @default(false)
-  title     String
+  id          String    @id @default(uuid())
+  completed   Boolean   @default(false)
+  title       String
   description String?
- 
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
- 
+  dueDate     DateTime?
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
