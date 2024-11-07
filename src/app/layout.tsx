@@ -33,7 +33,12 @@ export default function RootLayout({
           <body
             className={`${geistSans.variable} ${geistMono.variable} font-geist antialiased`}
           >
-            <ThemeProvider defaultTheme="system" attribute="class">
+            <ThemeProvider
+              defaultTheme="system"
+              attribute="class"
+              disableTransitionOnChange
+              enableSystem
+            >
               {children}
             </ThemeProvider>
           </body>
