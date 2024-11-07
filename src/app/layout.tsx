@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/sonner';
 import QueryClientProvider from '@/components/query-client-provider';
 
 const geistSans = localFont({
@@ -40,6 +41,7 @@ export default function RootLayout({
               enableSystem
             >
               {children}
+              <Toaster />
             </ThemeProvider>
           </body>
         </html>
