@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
+import { isRedirectError } from 'next/dist/client/components/redirect';
 
 export async function createUser(
   name: string,
@@ -20,49 +21,51 @@ export async function getUser(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-export async function login(_: string | undefined, formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  if (!email || !password) {
-    throw new Error('Please fill all fields');
-  }
-
-  try {
-    await signIn('credentials', { email, password });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      console.error(error);
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
-  }
-}
-
-export const register = async (_: string | undefined, formData: FormData) => {
-  const name = formData.get('name') as string;
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  if (!name || !email || !password) {
-    throw new Error('Please fill all fields');
-  }
-
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
+export const register = async ({
+  name,
+  email,
+  password,
+}: {
+  name: string;
+  email: string;
+  password: string;
+}) => {
+  const existingUser = await getUser(email);
 
   if (existingUser) {
-    return 'User already exists';
+    throw new Error('User already exists');
   }
 
   const hashedPassword = await hash(password, 12);
 
   await createUser(name, email, hashedPassword);
   redirect('/auth/login');
+};
+
+export const login = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
+  try {
+    await signIn('credentials', { email, password });
+  } catch (error) {
+    if (isRedirectError(error)) {
+      return;
+    }
+
+    if (error instanceof AuthError) {
+      console.error(error);
+      switch (error.type) {
+        case 'CredentialsSignin':
+          throw new Error('Invalid credentials.');
+        default:
+          throw new Error('Something went wrong.');
+      }
+    }
+
+    throw error;
+  }
 };
