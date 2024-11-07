@@ -2,6 +2,7 @@
 
 import { auth } from '@/auth';
 import prisma from '@/prisma-client';
+import { TaskRole } from '@prisma/client';
 
 type AddTaskParams = {
   title: string;
@@ -31,7 +32,23 @@ export const getTasks = async () => {
 
   const authorId = session.user.id as string;
 
-  return prisma.task.findMany({ where: { authorId } });
+  return prisma.task.findMany({
+    where: { assignments: { some: { userId: authorId } } },
+  });
+};
+
+export const getTaskById = async (id: string) => {
+  const session = await auth();
+
+  if (!session?.user) {
+    throw new Error('Unauthorized');
+  }
+
+  const authorId = session.user.id as string;
+
+  return prisma.task.findUnique({
+    where: { id, assignments: { some: { userId: authorId } } },
+  });
 };
 
 export const addTask = async ({ title, description }: AddTaskParams) => {
@@ -47,7 +64,9 @@ export const addTask = async ({ title, description }: AddTaskParams) => {
     data: {
       title,
       description: description ?? null,
-      authorId,
+      assignments: {
+        create: { userId: authorId, role: TaskRole.OWNER, accepted: true },
+      },
     },
   });
 };
@@ -65,14 +84,14 @@ export const updateTask = async ({
 
   const authorId = session.user.id as string;
 
-  const task = await prisma.task.findUnique({ where: { id, authorId } });
+  const task = await getTaskById(id);
 
   if (!task) {
     throw new Error('Task not found');
   }
 
   return prisma.task.update({
-    where: { id, authorId },
+    where: { id, assignments: { some: { userId: authorId } } },
     data: {
       title,
       ...(description !== undefined && { description }),
@@ -90,13 +109,15 @@ export const deleteTask = async ({ id }: DeleteTaskParams) => {
 
   const authorId = session.user.id as string;
 
-  const task = await prisma.task.findUnique({ where: { id, authorId } });
+  const task = await getTaskById(id);
 
   if (!task) {
     throw new Error('Task not found');
   }
 
-  return prisma.task.delete({ where: { id, authorId } });
+  return prisma.task.delete({
+    where: { id, assignments: { some: { userId: authorId } } },
+  });
 };
 
 export const toggleTaskStatus = async ({ id }: ToggleTaskParams) => {
@@ -108,14 +129,14 @@ export const toggleTaskStatus = async ({ id }: ToggleTaskParams) => {
 
   const authorId = session.user.id as string;
 
-  const task = await prisma.task.findUnique({ where: { id, authorId } });
+  const task = await getTaskById(id);
 
   if (!task) {
     throw new Error('Task not found');
   }
 
   return prisma.task.update({
-    where: { id, authorId },
+    where: { id, assignments: { some: { userId: authorId } } },
     data: {
       completed: !task.completed,
     },
