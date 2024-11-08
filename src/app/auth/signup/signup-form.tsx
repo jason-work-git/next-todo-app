@@ -1,16 +1,22 @@
 'use client';
 
 import { register } from '@/actions/user';
-import { Button } from '@/components/ui/button';
+import { useMutation } from '@tanstack/react-query';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useMutation } from '@tanstack/react-query';
+import { LoadingButton } from '@/components/ui/loading-button';
+
+import { isRedirectError } from 'next/dist/client/components/redirect';
 import { toast } from 'sonner';
 
 export default function SignUpForm() {
   const { isPending, mutate } = useMutation({
     mutationFn: register,
     onError: (error) => {
+      if (isRedirectError(error)) {
+        return;
+      }
       toast.error(error.message, {
         richColors: true,
         duration: 5000,
@@ -51,9 +57,9 @@ export default function SignUpForm() {
         </Label>
       </div>
 
-      <Button disabled={isPending} className="w-full font-medium">
+      <LoadingButton isLoading={isPending} className="w-full font-medium">
         Create
-      </Button>
+      </LoadingButton>
     </form>
   );
 }

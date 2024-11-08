@@ -2,14 +2,18 @@
 
 import { login } from '@/actions/user';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-
 import { useMutation } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { LoadingButton } from '@/components/ui/loading-button';
+
 export default function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const { isPending, mutate } = useMutation({
     mutationFn: login,
     onError: (error) => {
@@ -19,6 +23,16 @@ export default function LoginForm() {
         duration: 5000,
         closeButton: true,
       });
+    },
+    onSuccess: () => {
+      const callbackUrl = searchParams.get('callbackUrl');
+
+      if (callbackUrl) {
+        console.log('callbackUrl: ', callbackUrl);
+        router.push(new URL(callbackUrl).toString());
+      } else {
+        router.push('/home');
+      }
     },
   });
 
@@ -49,9 +63,13 @@ export default function LoginForm() {
         </Label>
       </div>
 
-      <Button disabled={isPending} className="w-full font-medium">
+      <LoadingButton
+        type="submit"
+        isLoading={isPending}
+        className="w-full font-medium"
+      >
         Sign in
-      </Button>
+      </LoadingButton>
     </form>
   );
 }
