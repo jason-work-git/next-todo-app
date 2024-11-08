@@ -9,6 +9,7 @@ import type { User as DBUser } from '@prisma/client';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextResponse } from 'next/server';
 import { getUser } from './actions/user';
+// import GitHub from 'next-auth/providers/github';
 
 declare module 'next-auth' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -34,6 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       } else if (isLoggedIn) {
         const callbackUrl = nextUrl.searchParams.get('callbackUrl');
         if (callbackUrl) {
+          console.log('callbackUrl: ', callbackUrl);
           return NextResponse.redirect(new URL(callbackUrl));
         }
         return NextResponse.redirect(new URL('/home', nextUrl));
@@ -60,12 +62,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user = await getUser(email);
 
         if (!user) {
+          return null;
           throw new Error("User with this email doesn't exist");
         }
 
         const passwordsMatch = await compare(password, user.password);
 
         if (!passwordsMatch) {
+          return null;
           throw new Error('Invalid password');
         }
 
@@ -75,5 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
+    // TODO: handle it later
+    // GitHub,
   ],
 });
