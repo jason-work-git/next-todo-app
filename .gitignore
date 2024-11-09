@@ -19,6 +19,7 @@
 
 # production
 /build
+/prisma/compiled
 
 # misc
 .DS_Store
