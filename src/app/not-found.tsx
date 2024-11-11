@@ -18,7 +18,6 @@ export default function NotFound() {
           <Link href="/">Go back home</Link>
         </Button>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-rose-500 to-transparent"></div>
     </div>
   );
 }
