@@ -10,49 +10,52 @@ const tasksData = JSON.parse(
   fs.readFileSync('prisma/mocks/mock-tasks.json', 'utf8'),
 ) as Omit<Task, 'id'>[];
 
-const importantEmails = ['maks.naumovich@gmail.com'];
+const importantUsers = [
+  {
+    name: 'Maksim Navumovich',
+    email: 'maks.naumovich@gmail.com',
+    password: 'password',
+  },
+];
 
-async function main() {
-  console.log('Hashing passwords...');
-  usersData.forEach((user, i) => {
-    user.password = bcrypt.hashSync(user.password, 1);
-    console.log('hashed password', i + 1, '/', usersData.length);
-
-    return user;
-  });
+const hashPasswords = (users: Omit<User, 'id'>[]) => {
+  console.group('Hashing passwords...');
+  for (let i = 0; i < users.length; i++) {
+    users[i].password = bcrypt.hashSync(users[i].password, 1);
+    console.log('hashed password', i + 1, '/', users.length);
+  }
+  console.groupEnd();
   console.log('Hashed');
+};
 
+const deleteOldData = async () => {
   console.log('Deleting old assignments...');
   await prisma.assignment.deleteMany();
   console.log('Assignments deleted');
 
   console.log('Deleting old users...');
   await prisma.user.deleteMany({
-    where: { email: { notIn: importantEmails } },
+    where: { email: { notIn: importantUsers.map((u) => u.email) } },
   });
   console.log('Users deleted');
 
   console.log('Deleting old tasks...');
   await prisma.task.deleteMany();
   console.log('Tasks deleted');
+};
 
+const createNewData = async () => {
   console.log('Creating new users...');
-  await prisma.user.createMany({
+  const users = await prisma.user.createManyAndReturn({
     data: usersData,
   });
   console.log('Users created');
 
-  const users = await prisma.user.findMany({
-    where: { email: { notIn: importantEmails } },
-  });
-
-  console.log('Creating tasks...');
+  console.log('Creating tasks and assignments...');
   await prisma.$transaction(async (prisma) => {
-    await prisma.task.createMany({
+    const tasks = await prisma.task.createManyAndReturn({
       data: tasksData,
     });
-
-    const tasks = await prisma.task.findMany();
 
     const taskRoles = Object.values(TaskRole);
 
@@ -73,21 +76,69 @@ async function main() {
 
     return tasks;
   });
+  console.log('Tasks and assignments created');
+};
+
+const createImportantUserAndTasksIfNotExists = async () => {
+  console.log('Creating important user if needed...');
+
+  const importantUser = await prisma.user.findUnique({
+    where: { email: importantUsers[0].email },
+  });
+
+  if (!importantUser) {
+    await prisma.user.create({
+      data: importantUsers[0],
+    });
+
+    console.log('Important user created');
+  } else {
+    console.log('Important user already exists');
+  }
+
+  console.log('Creating tasks for important user...');
+
+  await prisma.task.create({
+    data: {
+      title: 'Important task',
+      description: 'Important task description',
+      dueDate: new Date(),
+      assignments: {
+        create: {
+          role: TaskRole.OWNER,
+          accepted: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          user: {
+            connect: {
+              email: importantUsers[0].email,
+            },
+          },
+        },
+      },
+    },
+  });
   console.log('Tasks created');
+};
+
+async function main() {
+  hashPasswords(usersData);
+  await deleteOldData();
+  await createNewData();
+  await createImportantUserAndTasksIfNotExists();
 }
 
 console.time('Execution Time');
 
 main()
   .then(async () => {
-    await prisma.$disconnect();
+    console.log('Done');
   })
   .catch(async (e) => {
     console.error(e);
-    await prisma.$disconnect();
     process.exit(1);
   })
   .finally(async () => {
-    console.log('Done');
+    await prisma.$disconnect();
     console.timeEnd('Execution Time');
   });
