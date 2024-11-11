@@ -4,6 +4,7 @@ import { register } from '@/actions/user';
 import { useMutation } from '@tanstack/react-query';
 
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { Label } from '@/components/ui/label';
 import { LoadingButton } from '@/components/ui/loading-button';
 
@@ -53,7 +54,7 @@ export default function SignUpForm() {
         </Label>
         <Label className="flex flex-col gap-2">
           Password
-          <Input required type="password" name="password" />
+          <PasswordInput required name="password" />
         </Label>
       </div>
 

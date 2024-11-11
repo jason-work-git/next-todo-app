@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoadingButton } from '@/components/ui/loading-button';
+import { PasswordInput } from '@/components/ui/password-input';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -59,7 +60,7 @@ export default function LoginForm() {
         </Label>
         <Label className="flex flex-col gap-2">
           Password
-          <Input required type="password" name="password" />
+          <PasswordInput required name="password" />
         </Label>
       </div>
 
