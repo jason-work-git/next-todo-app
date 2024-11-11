@@ -88,7 +88,10 @@ const createImportantUserAndTasksIfNotExists = async () => {
 
   if (!importantUser) {
     await prisma.user.create({
-      data: importantUsers[0],
+      data: {
+        ...importantUsers[0],
+        password: bcrypt.hashSync(importantUsers[0].password, 1),
+      },
     });
 
     console.log('Important user created');
