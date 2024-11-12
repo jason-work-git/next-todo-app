@@ -50,7 +50,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           console.log('callbackUrl: ', callbackUrl);
           return NextResponse.redirect(new URL(callbackUrl));
         }
-        return NextResponse.redirect(new URL('/home', nextUrl));
       }
       return true;
     },
