@@ -60,7 +60,7 @@ export default function LoginForm() {
         </Label>
         <Label className="flex flex-col gap-2">
           Password
-          <PasswordInput required name="password" />
+          <PasswordInput disabled={isPending} required name="password" />
         </Label>
       </div>
 

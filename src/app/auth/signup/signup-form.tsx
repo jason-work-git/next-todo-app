@@ -41,11 +41,18 @@ export default function SignUpForm() {
       <div className="flex flex-col gap-4 mb-6">
         <Label className="flex flex-col gap-2">
           Name
-          <Input required type="text" name="name" placeholder="John Doe" />
+          <Input
+            disabled={isPending}
+            required
+            type="text"
+            name="name"
+            placeholder="John Doe"
+          />
         </Label>
         <Label className="flex flex-col gap-2">
           Email
           <Input
+            disabled={isPending}
             required
             type="email"
             name="email"
@@ -54,7 +61,7 @@ export default function SignUpForm() {
         </Label>
         <Label className="flex flex-col gap-2">
           Password
-          <PasswordInput required name="password" />
+          <PasswordInput disabled={isPending} required name="password" />
         </Label>
       </div>
 
