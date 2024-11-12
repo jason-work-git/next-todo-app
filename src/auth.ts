@@ -52,7 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         return NextResponse.redirect(new URL('/home', nextUrl));
       }
-      // return true;
+      return true;
     },
   },
   providers: [
