@@ -1,51 +1,44 @@
 'use server';
 
-import {
-  AddTaskParams,
-  UpdateTaskParams,
-  DeleteTaskParams,
-  ToggleTaskParams,
-} from './types';
+import { AddTaskDto, DeleteTaskDto, UpdateTaskDto } from './types';
 import { requireAuth } from '../auth/middlewares';
 import { taskService } from './service';
+import { Task } from '@prisma/client';
 
 export const getTasks = await requireAuth(({ session }) => {
   return taskService.getUserTasks(session.user.id);
 });
 
-export const getTaskById = await requireAuth(({ session }, id: string) => {
+export const getTodayTasks = await requireAuth(({ session }) => {
+  return taskService.getTodayUserTasks(session.user.id);
+});
+
+export const getTodayUncompletedTasks = await requireAuth(({ session }) => {
+  return taskService.getTodayUncompletedUserTasks(session.user.id);
+});
+
+export const getTaskById = await requireAuth(({ session }, id: Task['id']) => {
   return taskService.getUserTaskById(session.user.id, id);
 });
 
-export const addTask = await requireAuth(
-  ({ session }, { title, description }: AddTaskParams) => {
-    return taskService.createTask(session.user.id, { title, description });
-  },
-);
+export const addTask = await requireAuth(({ session }, data: AddTaskDto) => {
+  return taskService.createTask(session.user.id, data);
+});
 
 export const updateTask = await requireAuth(
-  async ({ session }, { id, title, description }: UpdateTaskParams) => {
+  async ({ session }, data: UpdateTaskDto) => {
     const authorId = session.user.id;
-    const task = await taskService.getUserTaskByIdOrThrow(authorId, id);
+    const task = await taskService.getUserTaskByIdOrThrow(authorId, data.id);
 
-    return taskService.updateTaskById(task.id, { title, description });
+    return taskService.updateTaskById(task.id, data);
   },
 );
 
 export const deleteTask = await requireAuth(
-  async ({ session }, { id }: DeleteTaskParams) => {
+  async ({ session }, { id }: DeleteTaskDto) => {
     const authorId = session.user.id;
     const task = await taskService.getUserTaskByIdOrThrow(authorId, id);
 
     return taskService.deleteTaskById(task.id);
-  },
-);
-
-export const toggleTaskStatus = await requireAuth(
-  async ({ session }, { id }: ToggleTaskParams) => {
-    const authorId = session.user.id;
-    const task = await taskService.getUserTaskByIdOrThrow(authorId, id);
-
-    return taskService.updateTaskById(task.id, { completed: !task.completed });
   },
 );

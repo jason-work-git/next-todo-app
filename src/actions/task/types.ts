@@ -1,20 +1,14 @@
 import { Task } from '@prisma/client';
 
-export type AddTaskParams = {
-  title: Task['title'];
-  description?: Task['description'];
-};
+export type AddTaskDto = Pick<Task, 'title' | 'description' | 'dueDate'>;
 
-export type UpdateTaskParams = {
-  id: Task['id'];
-  title?: Task['title'];
-  description?: Task['description'];
-};
+export type UpdateTaskDto = Omit<
+  Partial<Task> & {
+    id: Task['id'];
+  },
+  'createdAt' | 'updatedAt'
+>;
 
-export type DeleteTaskParams = {
-  id: Task['id'];
-};
-
-export type ToggleTaskParams = {
+export type DeleteTaskDto = {
   id: Task['id'];
 };
