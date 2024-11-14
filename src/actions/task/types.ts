@@ -1,18 +1,20 @@
+import { Task } from '@prisma/client';
+
 export type AddTaskParams = {
-  title: string;
-  description?: string;
+  title: Task['title'];
+  description?: Task['description'];
 };
 
 export type UpdateTaskParams = {
-  id: string;
-  title: string;
-  description?: string;
+  id: Task['id'];
+  title?: Task['title'];
+  description?: Task['description'];
 };
 
 export type DeleteTaskParams = {
-  id: string;
+  id: Task['id'];
 };
 
 export type ToggleTaskParams = {
-  id: string;
+  id: Task['id'];
 };
