@@ -23,12 +23,6 @@ git clone https://github.com/Junk-debug/next-todo-app
 cd next-todo-app
 ```
 
-### Installing Dependencies
-
-```bash
-npm install
-```
-
 ## Setup
 
 ### 1. Environment Variables
@@ -41,21 +35,42 @@ cp .env.example .env
 
 ### 2. Configure Environment Variables
 
-Edit the `.env` file to satisfy .env.example requirements.
+Edit the `.env` file to match the structure provided in `.env.example`.
 
 #### How to Obtain the Database URL
 
-One option is to use [Vercel’s free storage](https://vercel.com/docs/storage/vercel-postgres). You can follow [Vercel's official guide](https://vercel.com/docs/storage/vercel-postgres/get-started) to create a free PostgreSQL database.
+One option is to use [Vercel’s free storage](https://vercel.com/docs/storage/vercel-postgres) to create a PostgreSQL database.
 
-### 3. Seed the Database
+### 3. Installing Dependencies
 
-Run the following command to populate the database with mock data:
+After editing the `.env` file, run:
+
+```bash
+npm install
+```
+
+### 4. Run Database Migrations
+
+To set up your database, run the following setup script:
+
+```bash
+npm run setup
+```
+
+This command will:
+
+- Generate Prisma client files.
+- Apply database migrations using `npx prisma migrate deploy`.
+
+### 5. Seed the Database (Optional)
+
+If you want to populate your database with mock data, run:
 
 ```bash
 npm run seed
 ```
 
-### 4. Start the Development Server
+### 6. Start the Development Server
 
 ```bash
 npm run dev
@@ -69,23 +84,16 @@ Your application will be available at [http://localhost:3000](http://localhost:3
 
 The project includes several npm scripts to streamline development:
 
-| Script           | Description                      |
-| ---------------- | -------------------------------- |
-| `npm run dev`    | Start the development server     |
-| `npm run build`  | Build the project for production |
-| `npm run start`  | Start the production server      |
-| `npm run lint`   | Check for linting errors         |
-| `npm run format` | Format all source files          |
-| `npm run seed`   | Seed the database with mock data |
-
-Additional build-related scripts:
-
-| Script               | Description                  |
-| -------------------- | ---------------------------- |
-| `npm run build:seed` | Compile the seed script      |
-| `npm run seed`       | Run the compiled seed script |
-
----
+| Script               | Description                                           |
+| -------------------- | ----------------------------------------------------- |
+| `npm run dev`        | Start the development server                          |
+| `npm run build`      | Build the project for production                      |
+| `npm run start`      | Start the production server                           |
+| `npm run lint`       | Check for linting errors                              |
+| `npm run format`     | Format all source files                               |
+| `npm run setup`      | Generate Prisma client and deploy database migrations |
+| `npm run build:seed` | Compile the seed script                               |
+| `npm run seed`       | Seed the database with mock data (optional)           |
 
 ## Technologies Used
 
