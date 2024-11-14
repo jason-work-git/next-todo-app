@@ -13,7 +13,7 @@ async function createUser(name: string, email: string, password: string) {
   });
 }
 
-export async function getUser(email: string) {
+export async function getUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
 
@@ -26,7 +26,7 @@ export const register = async ({
   email: string;
   password: string;
 }) => {
-  const existingUser = await getUser(email);
+  const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     throw new Error('User already exists');
