@@ -1,6 +1,6 @@
 'use client';
 
-import { login } from '@/actions/auth/user';
+import { login } from '@/actions/auth/controller';
 
 import { useMutation } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
