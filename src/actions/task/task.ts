@@ -3,25 +3,12 @@
 import { auth } from '@/auth';
 import prisma from '@/prisma-client';
 import { TaskRole } from '@prisma/client';
-
-type AddTaskParams = {
-  title: string;
-  description?: string;
-};
-
-type UpdateTaskParams = {
-  id: string;
-  title: string;
-  description?: string;
-};
-
-type DeleteTaskParams = {
-  id: string;
-};
-
-type ToggleTaskParams = {
-  id: string;
-};
+import {
+  AddTaskParams,
+  UpdateTaskParams,
+  DeleteTaskParams,
+  ToggleTaskParams,
+} from './types';
 
 export const getTasks = async () => {
   const session = await auth();

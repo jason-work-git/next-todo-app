@@ -1,6 +1,6 @@
 'use client';
 
-import { register } from '@/actions/user';
+import { register } from '@/actions/user/user';
 import { useMutation } from '@tanstack/react-query';
 
 import { Input } from '@/components/ui/input';
