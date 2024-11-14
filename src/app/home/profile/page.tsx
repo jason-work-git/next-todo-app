@@ -23,12 +23,12 @@ export default function Page() {
           <Label htmlFor="email">Email</Label>
           <Input id="email" defaultValue="name@example.com" disabled />
         </div>
-      </Tabs>     
-      <Tabs className="space-y-4">
-        <Button className="w-full sm:w-auto mt-[300px]" variant={'outline'}>
+      </Tabs>
+      <Tabs className="space-y-4 mt-[300px]">
+        <Button className="w-full sm:w-auto" variant="outline">
           Change password
         </Button>
-        <Button className="w-full sm:w-auto">Save changes</Button>
+        <Button className="w-full sm:w-auto ml-1">Save changes</Button>
       </Tabs>
     </div>
   );
