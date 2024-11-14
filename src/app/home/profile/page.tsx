@@ -24,11 +24,11 @@ export default function Page() {
           <Input id="email" defaultValue="name@example.com" disabled />
         </div>
       </Tabs>
-      <Tabs className="space-y-4 mt-[300px]">
-        <Button className="w-full sm:w-auto" variant="outline">
+      <Tabs className="space-y-4 mt-4">
+        <Button className="w-full sm:w-auto mt-4" variant="outline">
           Change password
         </Button>
-        <Button className="w-full sm:w-auto ml-1">Save changes</Button>
+        <Button className="w-full sm:w-auto mt-4 ml-1">Save changes</Button>
       </Tabs>
     </div>
   );
