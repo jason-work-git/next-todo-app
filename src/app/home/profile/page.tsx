@@ -10,10 +10,10 @@ export default function Page() {
         <h2 className="text-2xl font-bold tracking-tight text-center">
           Settings
         </h2>
+        <p className="text-muted-foreground">
+          Manage your account settings and set e-mail preferences.
+        </p>
       </div>
-      <p className="text-muted-foreground">
-        Manage your account settings and set e-mail preferences.
-      </p>
       <Tabs className="space-y-4">
         {/* Profile Name */}
         <div className="space-y-2">
@@ -27,10 +27,12 @@ export default function Page() {
         </div>
       </Tabs>
       <Tabs className="space-y-4 mt-4">
-        <Button className="w-full sm:w-auto mt-4" variant="outline">
+        <Button className="w-full sm:w-auto" variant="outline">
           Change password
         </Button>
-        <Button className="w-full sm:w-auto mt-4 ml-1">Save changes</Button>
+        <Button className="w-full sm:w-auto ml-1" variant="default">
+          Save changes
+        </Button>
       </Tabs>
     </div>
   );
