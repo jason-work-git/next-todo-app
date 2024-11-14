@@ -7,11 +7,7 @@ import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 
-export async function createUser(
-  name: string,
-  email: string,
-  password: string,
-) {
+async function createUser(name: string, email: string, password: string) {
   return prisma.user.create({
     data: { email, password, name },
   });
