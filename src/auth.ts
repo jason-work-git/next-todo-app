@@ -47,7 +47,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       } else if (isLoggedIn) {
         const callbackUrl = nextUrl.searchParams.get('callbackUrl');
         if (callbackUrl) {
-          console.log('callbackUrl: ', callbackUrl);
           return NextResponse.redirect(new URL(callbackUrl));
         }
       }

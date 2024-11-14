@@ -18,7 +18,6 @@ export default function LoginForm() {
   const { isPending, mutate } = useMutation({
     mutationFn: login,
     onError: (error) => {
-      console.log(error);
       toast.error(error.message, {
         richColors: true,
         duration: 5000,
@@ -29,7 +28,6 @@ export default function LoginForm() {
       const callbackUrl = searchParams.get('callbackUrl');
 
       if (callbackUrl) {
-        console.log('callbackUrl: ', callbackUrl);
         router.push(new URL(callbackUrl).toString());
       } else {
         router.push('/home');
