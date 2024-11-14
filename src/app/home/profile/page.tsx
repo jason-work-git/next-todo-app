@@ -7,11 +7,13 @@ export default function Page() {
   return (
     <div className="space-y-6 p-4 sm:p-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-        <p className="text-muted-foreground">
-          Manage your account settings and set e-mail preferences.
-        </p>
+        <h2 className="text-2xl font-bold tracking-tight text-center">
+          Settings
+        </h2>
       </div>
+      <p className="text-muted-foreground">
+        Manage your account settings and set e-mail preferences.
+      </p>
       <Tabs className="space-y-4">
         {/* Profile Name */}
         <div className="space-y-2">
