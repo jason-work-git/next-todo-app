@@ -78,6 +78,19 @@ npm run dev
 
 Your application will be available at [http://localhost:3000](http://localhost:3000).
 
+### 7. Login
+
+To test this app, you will need to log in. You have the option to create an account (note that we do not have roles like Admin), but it's not mandatory. Below is an example user you can use to log in:
+
+- **Email:** johndoe@example.com
+- **Password:** password
+
+Make sure to populate your database with mock data by running:
+
+```bash
+npm run seed
+```
+
 ---
 
 ## Scripts
@@ -101,30 +114,30 @@ The project is built using the following technologies:
 
 ### Frontend
 
-- **Next.js (v15.0.1)**: React framework for server-side rendering and static site generation.
-- **React (v19.0.0)**: Core library for building user interfaces.
-- **Tailwind CSS**: Utility-first CSS framework for styling.
-- **Radix UI**: Accessible React components (used for tabs and labels).
-- **Lucide Icons**: Icon library for SVG icons.
+- [**Next.js (v15.0.1)**](https://nextjs.org/): React framework for server-side rendering and static site generation.
+- [**React (v19.0.0)**](https://react.dev/): Core library for building user interfaces.
+- [**Tailwind CSS**](https://tailwindcss.com/): Utility-first CSS framework for styling.
+- [**shadcn/ui**](https://ui.shadcn.com/): Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.
+- [**Lucide Icons**](https://lucide.dev/): Icon library for SVG icons.
 
 ### Backend
 
-- **NextAuth.js (v5.0.0-beta.25)**: Authentication library for Next.js.
-- **Prisma**: ORM for database management and migrations.
-- **PostgreSQL**: Database used for storing application data.
-- **bcryptjs**: Library for hashing and comparing passwords.
+- [**NextAuth.js (v5.0.0-beta.25)**](https://next-auth.js.org/): Authentication library for Next.js.
+- [**Prisma**](https://www.prisma.io/): ORM for database management and migrations.
+- [**PostgreSQL**](https://www.postgresql.org/): Database used for storing application data.
+- [**bcryptjs**](https://github.com/dcodeIO/bcrypt.js): Library for hashing and comparing passwords.
 
 ### State Management
 
-- **TanStack React Query**: For managing server state and data fetching.
+- [**TanStack React Query**](https://tanstack.com/query): For managing server state and data fetching.
 
 ### Validation
 
-- **Zod**: Type-safe schema validation.
+- [**Zod**](https://zod.dev/): Type-safe schema validation.
 
 ### Development Tools
 
-- **TypeScript**: Static type checking.
-- **ESLint**: Code linting tool.
-- **Prettier**: Code formatting tool.
-- **Turbopack**: High-performance bundler for Next.js.
+- [**TypeScript**](https://www.typescriptlang.org/): Static type checking.
+- [**ESLint**](https://eslint.org/): Code linting tool.
+- [**Prettier**](https://prettier.io/): Code formatting tool.
+- [**Turbopack**](https://turbo.build/pack): High-performance bundler for Next.js.
