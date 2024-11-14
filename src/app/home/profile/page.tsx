@@ -16,12 +16,12 @@ export default function Page() {
       </div>
       <Tabs className="space-y-4">
         {/* Profile Name */}
-        <div className="space-y-2">
+        <div className="space-y-2 max-w-md w-full">
           <Label htmlFor="name">Name</Label>
           <Input id="name" defaultValue="John Doe" />
         </div>
         {/* Email */}
-        <div className="space-y-2">
+        <div className="space-y-2 max-w-md w-full">
           <Label htmlFor="email">Email</Label>
           <Input id="email" defaultValue="name@example.com" disabled />
         </div>
