@@ -8,7 +8,7 @@ import type { User as DBUser } from '@prisma/client';
 
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextResponse } from 'next/server';
-import { userService } from './actions/user/service';
+import { userService } from './lib/actions/user/service';
 // import GitHub from 'next-auth/providers/github';
 
 declare module 'next-auth' {
