@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <div className="space-y-6 p-4 sm:p-8">
       <div className="text-center">
-        <h2 className="text-2xl font-bold tracking-tight text-center">
+        <h2 className="text-6xl font-bold tracking-tight text-center">
           Settings
         </h2>
         <p className="text-muted-foreground">
