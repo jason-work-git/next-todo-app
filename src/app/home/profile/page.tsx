@@ -21,10 +21,9 @@ export default function Page() {
         {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" defaultValue="name@example.com" />
+          <Input id="email" defaultValue="name@example.com" disabled />
         </div>
-      </Tabs>
-
+      </Tabs>     
       <Tabs className="space-y-4">
         <Button className="w-full sm:w-auto mt-[300px]" variant={'outline'}>
           Change password
