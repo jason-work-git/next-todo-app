@@ -1,7 +1,6 @@
 'use client';
 
-import { updateTask } from '@/lib/actions/task';
-import { getTaskById } from '@/lib/queries/task';
+import { updateTask, getTaskById } from '@/lib/actions/task/controller';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 

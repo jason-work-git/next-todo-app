@@ -3,7 +3,7 @@
 import { Task } from '@prisma/client';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { updateTask } from '@/lib/actions/task';
+import { updateTask } from '@/lib/actions/task/controller';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
