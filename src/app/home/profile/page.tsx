@@ -7,9 +7,7 @@ export default function Page() {
   return (
     <div className="space-y-6 p-4 sm:p-8">
       <div className="text-center">
-        <h2 className="text-6xl font-bold tracking-tight text-center">
-          Settings
-        </h2>
+        <h2 className="text-6xl font-bold tracking-tight">Settings</h2>
         <p className="text-muted-foreground">
           Manage your account settings and set e-mail preferences.
         </p>
@@ -26,7 +24,7 @@ export default function Page() {
           <Input id="email" defaultValue="name@example.com" disabled />
         </div>
       </Tabs>
-      <Tabs className="space-y-4 mt-4">
+      <Tabs className="space-y-4">
         <Button className="w-full sm:w-auto" variant="outline">
           Change password
         </Button>
