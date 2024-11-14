@@ -56,7 +56,6 @@ export const updateTask = await requireAuth(
       data: {
         title,
         ...(description !== undefined && { description }),
-        updatedAt: new Date(),
       },
     });
   },
