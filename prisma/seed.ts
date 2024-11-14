@@ -12,8 +12,8 @@ const tasksData = JSON.parse(
 
 const importantUsers = [
   {
-    name: 'Maksim Navumovich',
-    email: 'maks.naumovich@gmail.com',
+    name: 'John Doe',
+    email: 'johndoe@example.com',
     password: 'password',
   },
 ];
