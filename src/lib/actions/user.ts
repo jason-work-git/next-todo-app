@@ -6,6 +6,7 @@ import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
+import { getUser } from '../queries/user';
 
 export async function createUser(
   name: string,
@@ -15,10 +16,6 @@ export async function createUser(
   return prisma.user.create({
     data: { email, password, name },
   });
-}
-
-export async function getUser(email: string) {
-  return prisma.user.findUnique({ where: { email } });
 }
 
 export const register = async ({
