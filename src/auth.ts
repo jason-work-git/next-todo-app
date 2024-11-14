@@ -8,7 +8,7 @@ import type { User as DBUser } from '@prisma/client';
 
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextResponse } from 'next/server';
-import { getUser } from './lib/queries/user';
+import { userService } from './lib/actions/user/service';
 // import GitHub from 'next-auth/providers/github';
 
 declare module 'next-auth' {
@@ -45,13 +45,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return NextResponse.redirect(new URL('/home/today', nextUrl));
       }
 
+      if (isLoggedIn && nextUrl.pathname.startsWith('/auth')) {
+        return NextResponse.redirect(new URL('/home', nextUrl));
+      }
+
       if (isOnHome) {
         if (isLoggedIn) return true;
         return false;
       } else if (isLoggedIn) {
         const callbackUrl = nextUrl.searchParams.get('callbackUrl');
         if (callbackUrl) {
-          console.log('callbackUrl: ', callbackUrl);
           return NextResponse.redirect(new URL(callbackUrl));
         }
       }
@@ -74,7 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const { email, password } = parsedCredentials.data;
-        const user = await getUser(email);
+        const user = await userService.getUserByEmail(email);
 
         if (!user) {
           return null;

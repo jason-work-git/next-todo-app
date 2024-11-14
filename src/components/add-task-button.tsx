@@ -17,7 +17,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { DateSelect } from './date-select';
 import { useState } from 'react';
-import { addTask } from '@/lib/actions/task';
+import { addTask } from '@/lib/actions/task/controller';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { LoadingButton } from './ui/loading-button';

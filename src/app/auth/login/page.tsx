@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import LoginForm from './login-form';
-import Providers from '@/components/providers';
+import AuthProviders from '@/components/auth-providers';
 
 export default function LoginPage() {
   return (
@@ -16,7 +16,7 @@ export default function LoginPage() {
           Forgot password?
         </span>
 
-        <Providers />
+        <AuthProviders />
 
         <span className="text-xs self-center text-muted-foreground">
           Don&apos;t have an account?{' '}
