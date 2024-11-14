@@ -1,21 +1,11 @@
 'use server';
 
-import prisma from '@/prisma-client';
 import { redirect } from 'next/navigation';
 import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
-
-async function createUser(name: string, email: string, password: string) {
-  return prisma.user.create({
-    data: { email, password, name },
-  });
-}
-
-export async function getUserByEmail(email: string) {
-  return prisma.user.findUnique({ where: { email } });
-}
+import { userService } from './service';
 
 export const register = async ({
   name,
@@ -26,7 +16,7 @@ export const register = async ({
   email: string;
   password: string;
 }) => {
-  const existingUser = await getUserByEmail(email);
+  const existingUser = await userService.getUserByEmail(email);
 
   if (existingUser) {
     throw new Error('User already exists');
@@ -34,7 +24,7 @@ export const register = async ({
 
   const hashedPassword = await hash(password, 12);
 
-  await createUser(name, email, hashedPassword);
+  await userService.createUser(name, email, hashedPassword);
   redirect('/auth/login');
 };
 

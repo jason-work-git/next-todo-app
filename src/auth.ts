@@ -8,7 +8,7 @@ import type { User as DBUser } from '@prisma/client';
 
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextResponse } from 'next/server';
-import { getUserByEmail } from './actions/user/user';
+import { userService } from './actions/user/service';
 // import GitHub from 'next-auth/providers/github';
 
 declare module 'next-auth' {
@@ -69,7 +69,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const { email, password } = parsedCredentials.data;
-        const user = await getUserByEmail(email);
+        const user = await userService.getUserByEmail(email);
 
         if (!user) {
           return null;
