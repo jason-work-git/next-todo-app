@@ -1,8 +1,8 @@
 'use client';
 
-import { updateTask, getTaskById } from '@/lib/actions/task/controller';
+import { getTaskById } from '@/lib/actions/task/controller';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { DateSelect } from '@/components/date-select';
 import {
@@ -16,34 +16,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 
 import { Task } from '@prisma/client';
+import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 
 export const Test = ({ task }: { task: Task }) => {
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationFn: updateTask,
-    onMutate: async (newTask) => {
-      const previousTask = queryClient.getQueryData(['tasks', task.id]) as Task;
-
-      queryClient.setQueryData(['tasks', task.id], (oldTask: Task) =>
-        oldTask.id === newTask.id ? { ...oldTask, ...newTask } : oldTask,
-      );
-
-      return { previousTask };
-    },
-    onError: (_, __, context: { previousTask: Task } | undefined) => {
-      queryClient.setQueryData(['tasks', task.id], context?.previousTask);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ['tasks', task.id],
-      });
-
-      queryClient.refetchQueries({
-        queryKey: ['tasks', 'today'],
-      });
-    },
-  });
+  const { mutate } = useUpdateTaskMutation();
 
   return (
     <>

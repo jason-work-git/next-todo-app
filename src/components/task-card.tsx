@@ -1,13 +1,13 @@
 'use client';
 
-import { Task } from '@prisma/client';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { updateTask } from '@/lib/actions/task/controller';
+
+import { Task } from '@prisma/client';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 
 export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
   task: Task;
@@ -22,39 +22,7 @@ export const TaskCard = ({
 }: TaskCardProps) => {
   const router = useRouter();
 
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationFn: updateTask,
-    onMutate: async (newTask) => {
-      const previousTasks = queryClient.getQueryData([
-        'tasks',
-        'today',
-      ]) as Task[];
-
-      queryClient.setQueryData(['tasks', 'today'], (oldTasks: Task[]) =>
-        oldTasks.map((task) =>
-          task.id === newTask.id
-            ? { ...task, completed: newTask.completed }
-            : task,
-        ),
-      );
-
-      return { previousTasks };
-    },
-    onError: (_, __, context: { previousTasks: Task[] } | undefined) => {
-      queryClient.setQueryData(['tasks', 'today'], context?.previousTasks);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ['tasks', 'today'],
-      });
-
-      queryClient.refetchQueries({
-        queryKey: ['tasks', id],
-      });
-    },
-  });
+  const { mutate } = useUpdateTaskMutation();
 
   const onCheckedChange = async (value: boolean) => {
     mutate({ id, completed: value });
