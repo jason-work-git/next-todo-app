@@ -9,16 +9,6 @@ export const getTasks = await requireAuth(async ({ session }) => {
   return taskService.getUserTasks(session.user.id);
 });
 
-export const getTodayTasks = await requireAuth(async ({ session }) => {
-  return taskService.getTodayUserTasks(session.user.id);
-});
-
-export const getTodayUncompletedTasks = await requireAuth(
-  async ({ session }) => {
-    return taskService.getTodayUncompletedUserTasks(session.user.id);
-  },
-);
-
 export const getTaskById = await requireAuth(
   async ({ session }, id: Task['id']) => {
     return taskService.getUserTaskById(session.user.id, id);

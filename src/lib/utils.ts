@@ -1,4 +1,6 @@
+import { Task } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
+import { isToday } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 /**
@@ -126,4 +128,12 @@ export const getNextWeek = () => {
   nextWeek.setDate(nextWeek.getDate() + 7);
   nextWeek.setHours(0, 0, 0, 0);
   return nextWeek;
+};
+
+export const filterTodayTasks = (tasks: Task[]) => {
+  return tasks.filter((task) => task.dueDate && isToday(task.dueDate));
+};
+
+export const filterUncompletedTasks = (tasks: Task[]) => {
+  return tasks.filter((task) => !task.completed);
 };
