@@ -1,41 +1,11 @@
 'use client';
 
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { CalendarCheck, ListTodo, User } from 'lucide-react';
 
 import TaskDrawer from '@/components/task-drawer';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-
-const routes = [
-  {
-    children: (
-      <>
-        <CalendarCheck />
-        <span>Today</span>
-      </>
-    ),
-    href: '/home/today',
-  },
-  {
-    children: (
-      <>
-        <ListTodo />
-        <span>All tasks</span>
-      </>
-    ),
-    href: '/home/all',
-  },
-  {
-    children: (
-      <>
-        <User />
-        <span>Profile</span>
-      </>
-    ),
-    href: '/home/profile',
-  },
-];
+import { routes } from './routes';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
