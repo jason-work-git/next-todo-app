@@ -1,42 +1,44 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { signOut } from '@/auth';
+import { signOut } from 'next-auth/react';
 import { useMutation } from '@tanstack/react-query';
 import { updateUser } from '@/lib/actions/user/controller';
+import { toast } from 'sonner';
+import { LoadingButton } from '@/components/ui/loading-button';
 
 export default function Page() {
   const [name, setName] = useState('');
-  const usernameInputRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState('');
+  const [id, setId] = useState('');
 
   const mutation = useMutation({
     mutationFn: updateUser,
     onSuccess: () => {
-      alert('User updated successfully');
+      toast.success('User updated successfully');
     },
     onError: (error) => {
-      alert(error.message);
+      toast(error.message);
     },
   });
 
   useEffect(() => {
-    const loaderName = async () => {
-      const response = await fetch('/api/user');
-      const data = await response.json();
-      setName(data.name);
-    };
-    if (typeof window !== 'undefined') {
-      loaderName();
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const { name, email, id } = JSON.parse('user');
+      setName(name);
+      setEmail(email);
+      setId(id);
     }
-  });
+  }, []);
 
   const handleSaveChanges = () => {
     mutation.mutate({
       name,
-      id: '',
+      id,
     });
   };
 
@@ -49,28 +51,20 @@ export default function Page() {
         </p>
       </div>
       <div className="space-y-2 max-w-md w-full">
-        <Label
-          htmlFor="name"
-          onClick={() => {
-            usernameInputRef.current?.focus();
-          }}
-        >
-          Name
-        </Label>
+        <Label htmlFor="name">Name</Label>
         <Input
           id="name"
-          ref={usernameInputRef}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div className="space-y-2 max-w-md w-full">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" defaultValue="name@example.com" disabled />
+        <Input id="email" value={email} readOnly />
       </div>
-      <Button className="w-full sm:w-auto" variant="outline">
+      <LoadingButton className="w-full sm:w-auto" variant="outline">
         Change password
-      </Button>
+      </LoadingButton>
       <Button
         className="w-full sm:w-auto ml-1"
         onClick={handleSaveChanges}
