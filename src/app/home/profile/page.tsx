@@ -1,15 +1,15 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { signOut } from 'next-auth/react';
+import { signOut } from '@/auth';
 import { useMutation } from '@tanstack/react-query';
 import { updateUser } from '@/lib/actions/user/controller';
 
 export default function Page() {
-  const [name, setName] = useState('John Doe');
+  const [name, setName] = useState('');
   const usernameInputRef = useRef<HTMLInputElement>(null);
 
   const mutation = useMutation({
@@ -20,6 +20,17 @@ export default function Page() {
     onError: (error) => {
       alert(error.message);
     },
+  });
+
+  useEffect(() => {
+    const loaderName = async () => {
+      const response = await fetch('/api/user');
+      const data = await response.json();
+      setName(data.name);
+    };
+    if (typeof window !== 'undefined') {
+      loaderName();
+    }
   });
 
   const handleSaveChanges = () => {
@@ -37,7 +48,6 @@ export default function Page() {
           Manage your account settings and set e-mail preferences.
         </p>
       </div>
-      {/* Profile Name */}
       <div className="space-y-2 max-w-md w-full">
         <Label
           htmlFor="name"
@@ -54,12 +64,10 @@ export default function Page() {
           onChange={(e) => setName(e.target.value)}
         />
       </div>
-      {/* Email */}
       <div className="space-y-2 max-w-md w-full">
         <Label htmlFor="email">Email</Label>
         <Input id="email" defaultValue="name@example.com" disabled />
       </div>
-      {/* Change Password */}
       <Button className="w-full sm:w-auto" variant="outline">
         Change password
       </Button>
@@ -71,7 +79,6 @@ export default function Page() {
       >
         Save changes
       </Button>
-      {/* Sign Out */}
       <Button
         className="w-full ml-1 sm:w-auto"
         variant="outline"
