@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus } from 'lucide-react';
+
 import { Button, ButtonProps } from './ui/button';
 import {
   Drawer,
@@ -15,46 +16,36 @@ import {
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
-import { DateSelect } from './date-select';
-import { useState } from 'react';
-import { addTask } from '@/lib/actions/task/controller';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { LoadingButton } from './ui/loading-button';
+import { DateSelect } from './date-select';
 
-export const AddTaskButton = (props: ButtonProps) => {
+import useAddTaskMutation from '@/hooks/useAddTaskMutation';
+import { useState } from 'react';
+
+export const AddTaskButton = ({
+  defaultDueDate = null,
+  ...props
+}: ButtonProps & {
+  defaultDueDate?: Date | null;
+}) => {
   const [isOpened, setIsOpened] = useState(false);
-  const queryClient = useQueryClient();
+
+  const defaultValues = {
+    title: '',
+    description: '',
+    dueDate: defaultDueDate,
+  };
 
   // TODO: add hookform later
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
     dueDate: Date | null;
-  }>({
-    title: '',
-    description: '',
-    dueDate: null,
-  });
+  }>(defaultValues);
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: addTask,
-    onError: (error) => {
-      toast.error(error.message, {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
-    },
+  const { mutate, isPending } = useAddTaskMutation({
     onSuccess: () => {
-      toast.success('Task added successfully', {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
-      queryClient.refetchQueries({
-        queryKey: ['tasks'],
-      });
+      setFormData(defaultValues);
     },
     onSettled: () => {
       setIsOpened(false);
