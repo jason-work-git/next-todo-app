@@ -30,6 +30,14 @@ export default function Page() {
       <Button className="w-full sm:w-auto ml-1" variant="default">
         Save changes
       </Button>
+      {/* Sign Out  */}
+      <Button
+        className="w-full ml-1 sm:w-auto"
+        variant="outline"
+        onClick={() => signOut()}
+      >
+        Logout
+      </Button>
     </div>
   );
 }
