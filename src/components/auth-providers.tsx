@@ -3,7 +3,7 @@ import AppleIcon from '@/components/icons/apple-icon';
 import GithubIcon from '@/components/icons/github-icon';
 import Image from 'next/image';
 
-const Providers = () => (
+const AuthProviders = () => (
   <div>
     <div className="relative mb-4">
       <div className="absolute inset-0 flex items-center">
@@ -29,4 +29,4 @@ const Providers = () => (
   </div>
 );
 
-export default Providers;
+export default AuthProviders;

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import SignUpForm from './signup-form';
-import Providers from '@/components/providers';
+import AuthProviders from '@/components/auth-providers';
 
 export default function SignUpPage() {
   return (
@@ -11,7 +11,7 @@ export default function SignUpPage() {
         </h1>
         <SignUpForm />
 
-        <Providers />
+        <AuthProviders />
 
         <span className="text-xs self-center text-muted-foreground">
           Already have an account?{' '}
