@@ -14,24 +14,20 @@ export default function Page() {
           Manage your account settings and set e-mail preferences.
         </p>
       </div>
-      {/* Profile Name */}
       <div className="space-y-2 max-w-md w-full">
         <Label htmlFor="name">Name</Label>
         <Input id="name" defaultValue="John Doe" />
       </div>
-      {/* Email */}
       <div className="space-y-2 max-w-md w-full">
         <Label htmlFor="email">Email</Label>
         <Input id="email" defaultValue="name@example.com" disabled />
       </div>
-      {/* Change Password */}
       <Button className="w-full sm:w-auto" variant="outline">
         Change password
       </Button>
       <Button className="w-full sm:w-auto ml-1" variant="default">
         Save changes
       </Button>
-      {/* Sign Out  */}
       <Button
         className="w-full ml-1 sm:w-auto"
         variant="outline"
