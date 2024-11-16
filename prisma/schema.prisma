@@ -32,7 +32,7 @@ model Assignment {
   role     TaskRole
   accepted Boolean  @default(false)
 
-  task Task @relation(fields: [taskId], references: [id])
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id])
 
   updatedAt DateTime @updatedAt
