@@ -16,13 +16,13 @@ const AuthProviders = () => (
       </div>
     </div>
     <div className="flex gap-3 justify-center">
-      <Button variant={'outline'} size={'icon'}>
+      <Button variant={'outline'} disabled size={'icon'}>
         <GithubIcon />
       </Button>
-      <Button variant={'outline'} size={'icon'}>
+      <Button variant={'outline'} disabled size={'icon'}>
         <Image src={'/google-icon.svg'} alt="Google" width={18} height={18} />
       </Button>
-      <Button variant={'outline'} size={'icon'}>
+      <Button variant={'outline'} disabled size={'icon'}>
         <AppleIcon />
       </Button>
     </div>
