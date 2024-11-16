@@ -28,15 +28,26 @@ export const TaskCard = ({
     mutate({ id, completed: value });
   };
 
-  const onClick = async () => {
+  const onClick = () => {
     router.push(`?taskId=${id}`);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick();
+    }
   };
 
   return (
     <Card
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={onKeyDown}
       className={cn(
         'cursor-pointer active:scale-[.97] transition-transform duration-200 has-[.checkbox:active]:scale-100',
+        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         className,
       )}
       ref={ref}
@@ -46,6 +57,7 @@ export const TaskCard = ({
         <Checkbox
           className="checkbox size-5 rounded-full"
           onCheckedChange={onCheckedChange}
+          onKeyDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
           checked={completed}
         />

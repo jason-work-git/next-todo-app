@@ -35,7 +35,7 @@ export default function MainPage() {
         {formattedToday}
       </h2>
 
-      <div className="flex-grow overflow-y-auto space-y-2">
+      <div className="flex-grow overflow-y-auto space-y-2 p-px">
         {tasks.map((task) => {
           return <TaskCard key={task.id} task={task} />;
         })}
