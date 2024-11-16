@@ -11,6 +11,9 @@ export default async function ProfilePage() {
           Profile
         </h1>
         <span className="text-xs self-center text-muted-foreground">
+          ID: {session?.user?.id}
+        </span>
+        <span className="text-xs self-center text-muted-foreground">
           Email: {session?.user?.email}
         </span>
         <span className="text-xs self-center text-muted-foreground">
