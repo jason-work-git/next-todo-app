@@ -1,27 +1,28 @@
 import { auth } from '@/auth';
 import { Session } from 'next-auth';
 
-type MetaData = {
+type Metadata = {
   session: Session & { user: { id: string } };
 };
 
 export type Handler<P extends unknown[], R extends Promise<unknown>> = (
-  metadata: MetaData,
+  metadata: Metadata,
   ...props: P
 ) => R;
 
-export const requireAuth = async <
-  P extends unknown[],
-  R extends Promise<unknown>,
->(
-  handler: Handler<P, R>,
-) => {
-  const session = await auth();
+export const requireAuth =
+  <P extends unknown[], R extends Promise<unknown>>(handler: Handler<P, R>) =>
+  async (...rest: P): Promise<Awaited<R>> => {
+    const session = await auth();
 
-  if (!session || !session.user) {
-    throw new Error('Unauthorized');
-  }
+    if (!session || !session.user) {
+      throw new Error('Unauthorized');
+    }
 
-  return (...rest: P) =>
-    handler({ session: session as MetaData['session'] }, ...rest);
-};
+    const result = await handler(
+      { session: session as Metadata['session'] },
+      ...rest,
+    );
+
+    return result;
+  };
