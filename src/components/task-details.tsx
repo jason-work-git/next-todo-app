@@ -59,6 +59,15 @@ export const Test = ({ task }: { task: Task }) => {
   );
 };
 
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      <DrawerTitle>{children}</DrawerTitle>
+      <DrawerDescription hidden>{children}</DrawerDescription>
+    </>
+  );
+};
+
 export function TaskDetails({ taskId }: { taskId: string }) {
   const {
     data: task,
@@ -70,15 +79,15 @@ export function TaskDetails({ taskId }: { taskId: string }) {
   });
 
   if (isLoading) {
-    return <DrawerTitle>Loading...</DrawerTitle>;
+    return <Layout>Loading...</Layout>;
   }
 
   if (error) {
-    return <DrawerTitle>Error: {error.message}</DrawerTitle>;
+    return <Layout>Error: {error.message}</Layout>;
   }
 
   if (!task) {
-    return <DrawerTitle>Task not found</DrawerTitle>;
+    return <Layout>Task not found</Layout>;
   }
 
   return <Test task={task} />;
