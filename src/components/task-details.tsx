@@ -17,9 +17,12 @@ import { Button } from '@/components/ui/button';
 
 import { Task } from '@prisma/client';
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
+import { DeleteTaskButton } from './delete-task-button';
+import { useTaskDrawerData } from './task-drawer-provider';
 
 export const Test = ({ task }: { task: Task }) => {
   const { mutate } = useUpdateTaskMutation();
+  const { close } = useTaskDrawerData();
 
   return (
     <>
@@ -53,7 +56,9 @@ export const Test = ({ task }: { task: Task }) => {
       </div>
 
       <DrawerFooter>
-        <Button>Save</Button>
+        <Button disabled>Save</Button>
+
+        <DeleteTaskButton taskId={task.id} onDelete={close} />
       </DrawerFooter>
     </>
   );
