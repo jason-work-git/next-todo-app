@@ -106,8 +106,8 @@ export const AddTaskButton = ({
               Due date
               <DateSelect
                 disabled={isPending}
-                initialDate={formData.dueDate}
-                onSelectValue={(value) =>
+                selectedDate={formData.dueDate}
+                onSelectDate={(value) =>
                   setFormData({ ...formData, dueDate: value })
                 }
               />

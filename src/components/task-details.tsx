@@ -48,10 +48,10 @@ export const Test = ({ task }: { task: Task }) => {
       </DrawerHeader>
       <div className="px-4">
         <DateSelect
-          onSelectValue={(dueDate) => {
+          onSelectDate={(dueDate) => {
             mutate({ id: task.id, dueDate: dueDate });
           }}
-          initialDate={task.dueDate}
+          selectedDate={task.dueDate}
         />
       </div>
 
