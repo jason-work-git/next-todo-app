@@ -25,9 +25,17 @@ export default function Page() {
       toast(error.message);
     },
   });
+
+  if (!session) {
+    toast.error('User session data is incomplete. Please log in again.');
+    return null;
+  }
+
   const handleSaveChanges = () => {
-    if (!session?.user?.id) {
-      toast.error('User ID is missing');
+    if (!session?.user?.id || !session?.user?.name || !session?.user?.email) {
+      toast.error(
+        'User session id, email or name is incomplete. Please log in again.',
+      );
       return;
     }
 
