@@ -62,17 +62,17 @@ export default function Page() {
         <Label htmlFor="email">Email</Label>
         <Input id="email" value={email} readOnly />
       </div>
-      <LoadingButton className="w-full sm:w-auto" variant="outline">
+      <Button className="w-full sm:w-auto" variant="outline">
         Change password
-      </LoadingButton>
-      <Button
+      </Button>
+      <LoadingButton
         className="w-full sm:w-auto ml-1"
         onClick={handleSaveChanges}
         disabled={mutation.isPending}
         variant="default"
       >
         Save changes
-      </Button>
+      </LoadingButton>
       <Button
         className="w-full ml-1 sm:w-auto"
         variant="outline"
