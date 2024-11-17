@@ -2,20 +2,23 @@
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { DateIcon } from './date-icon';
 
 import { Task } from '@prisma/client';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 
 export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
   task: Task;
+  showDueDate?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 };
 
 export const TaskCard = ({
-  task: { title, completed, id },
+  task: { id, title, description, completed, dueDate },
+  showDueDate = true,
   ref,
   className,
   ...props
@@ -38,7 +41,6 @@ export const TaskCard = ({
       onClick();
     }
   };
-
   return (
     <Card
       role="button"
@@ -53,23 +55,38 @@ export const TaskCard = ({
       ref={ref}
       {...props}
     >
-      <CardHeader className="p-4 flex-row gap-2 items-center">
-        <Checkbox
-          className="checkbox size-5 rounded-full"
-          onCheckedChange={onCheckedChange}
-          onKeyDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-          checked={completed}
-        />
-        <CardTitle
-          className={cn(
-            '!m-0',
-            'peer-data-[state=checked]:line-through peer-data-[state=checked]:text-muted-foreground',
-          )}
-        >
-          {title}
-        </CardTitle>
-        {/* <span className="text-muted-foreground text-xs">test</span> */}
+      <CardHeader className="p-4 space-y-0">
+        <div className="flex flex-row gap-2 items-center">
+          <Checkbox
+            className="checkbox size-5 rounded-full"
+            onCheckedChange={onCheckedChange}
+            onKeyDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            checked={completed}
+          />
+          <CardTitle
+            className={cn(
+              '!m-0',
+              'peer-data-[state=checked]:line-through peer-data-[state=checked]:text-muted-foreground',
+              'overflow-hidden text-ellipsis',
+            )}
+          >
+            {title}
+          </CardTitle>
+        </div>
+
+        {description && (
+          <span className="pl-7 !mt-0 text-muted-foreground text-sm text-nowrap overflow-hidden text-ellipsis">
+            {description}
+          </span>
+        )}
+
+        {dueDate && showDueDate && (
+          <span className="pl-7 flex gap-1 items-center text-primary text-sm text-nowrap overflow-hidden text-ellipsis">
+            <DateIcon date={dueDate} className="size-3.5" />
+            {dueDate ? formatDate(dueDate) : 'No due date'}
+          </span>
+        )}
       </CardHeader>
     </Card>
   );

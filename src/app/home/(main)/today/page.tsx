@@ -37,7 +37,7 @@ export default function MainPage() {
 
       <div className="flex-grow overflow-y-auto space-y-2 p-px">
         {tasks.map((task) => {
-          return <TaskCard key={task.id} task={task} />;
+          return <TaskCard showDueDate={false} key={task.id} task={task} />;
         })}
         <AddTaskButton defaultDueDate={new Date()} />
       </div>
