@@ -61,7 +61,12 @@ export default function SignUpForm() {
         </Label>
         <Label className="flex flex-col gap-2">
           Password
-          <PasswordInput disabled={isPending} required name="password" />
+          <PasswordInput
+            minLength={6}
+            disabled={isPending}
+            required
+            name="password"
+          />
         </Label>
       </div>
 
