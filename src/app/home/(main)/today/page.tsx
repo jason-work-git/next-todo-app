@@ -3,7 +3,7 @@
 import { AddTaskButton } from '@/components/add-task-button';
 import { TaskCard } from '@/components/task-card';
 
-import { getTasks } from '@/lib/actions/task/controller';
+import { getTasks } from '@/actions/task/controller';
 import { useQuery } from '@tanstack/react-query';
 import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
 

@@ -1,7 +1,7 @@
-import { DeleteTaskDto } from '@/lib/actions/task/types';
+import { DeleteTaskDto } from '@/actions/task/types';
 import { Task } from '@prisma/client';
 
-import { deleteTask } from '@/lib/actions/task/controller';
+import { deleteTask } from '@/actions/task/controller';
 import {
   useQueryClient,
   useMutation,

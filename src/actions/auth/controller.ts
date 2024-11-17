@@ -5,7 +5,7 @@ import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
-import { userService } from '@/lib/actions/user/service';
+import { userService } from '@/actions/user/service';
 
 export const register = async ({
   name,

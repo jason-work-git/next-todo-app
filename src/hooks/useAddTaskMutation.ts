@@ -1,5 +1,5 @@
-import { addTask } from '@/lib/actions/task/controller';
-import { AddTaskDto } from '@/lib/actions/task/types';
+import { addTask } from '@/actions/task/controller';
+import { AddTaskDto } from '@/actions/task/types';
 import { Task } from '@prisma/client';
 import {
   useQueryClient,

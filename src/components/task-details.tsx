@@ -1,6 +1,6 @@
 'use client';
 
-import { getTaskById } from '@/lib/actions/task/controller';
+import { getTaskById } from '@/actions/task/controller';
 
 import { useQuery } from '@tanstack/react-query';
 
