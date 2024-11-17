@@ -10,10 +10,11 @@ export const LoadingButton = ({
   children,
   isLoading,
   position = 'start',
+  disabled,
   ...props
 }: LoadingButtonProps) => {
   return (
-    <Button disabled={isLoading} {...props}>
+    <Button disabled={isLoading || disabled} {...props}>
       {position === 'start' && isLoading && (
         <LoaderCircle className="animate-spin" />
       )}
