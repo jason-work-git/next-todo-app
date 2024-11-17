@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { signOut, useSession } from 'next-auth/react';
 import { useMutation } from '@tanstack/react-query';
-import { updateUser } from '@/lib/actions/user/controller';
+import { updateUser } from '@/actions/user/controller';
 import { toast } from 'sonner';
 import { LoadingButton } from '@/components/ui/loading-button';
 
