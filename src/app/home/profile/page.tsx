@@ -1,19 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useMutation } from '@tanstack/react-query';
 import { updateUser } from '@/lib/actions/user/controller';
 import { toast } from 'sonner';
 import { LoadingButton } from '@/components/ui/loading-button';
 
 export default function Page() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [id, setId] = useState('');
+  const { data: session, status } = useSession();
+
+  if (status === 'unauthenticated') {
+    toast.error('You are not authenticated');
+  }
 
   const mutation = useMutation({
     mutationFn: updateUser,
@@ -24,21 +25,14 @@ export default function Page() {
       toast(error.message);
     },
   });
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const { name, email, id } = JSON.parse('user');
-      setName(name);
-      setEmail(email);
-      setId(id);
-    }
-  }, []);
-
   const handleSaveChanges = () => {
+    if (!session?.user) {
+      toast.error('Session or user data is missing');
+      return;
+    }
     mutation.mutate({
-      name,
-      id,
+      name: session.user.name,
+      id: session.user.id,
     });
   };
 
@@ -54,13 +48,15 @@ export default function Page() {
         <Label htmlFor="name">Name</Label>
         <Input
           id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          defaultValue={session?.user?.name || ''}
+          onChange={(e) => {
+            if (session?.user) session.user.name = e.target.value;
+          }}
         />
       </div>
       <div className="space-y-2 max-w-md w-full">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" value={email} readOnly />
+        <Input id="email" defaultValue={session?.user?.email || ''} readOnly />
       </div>
       <Button className="w-full sm:w-auto" variant="outline">
         Change password
