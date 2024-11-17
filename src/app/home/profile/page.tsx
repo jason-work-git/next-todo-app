@@ -1,34 +1,49 @@
-import { auth, signOut } from '@/auth';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
-export default async function ProfilePage() {
+import { auth, signOut } from '@/auth';
+
+export default async function Page() {
   const session = await auth();
 
-  return (
-    <main className="p-8 flex items-center justify-center min-h-dvh">
-      <div className="min-w-64 w-72 flex flex-col items-center space-y-4">
-        <h1 className="text-center tracking-tight text-3xl font-semibold">
-          Profile
-        </h1>
-        <span className="text-xs self-center text-muted-foreground">
-          ID: {session?.user?.id}
-        </span>
-        <span className="text-xs self-center text-muted-foreground">
-          Email: {session?.user?.email}
-        </span>
-        <span className="text-xs self-center text-muted-foreground">
-          Name: {session?.user?.name}
-        </span>
-        <form
-          action={async () => {
-            'use server';
+  if (!session || !session.user) {
+    throw new Error('Unauthorized');
+  }
 
-            await signOut();
-          }}
-        >
-          <Button>Logout</Button>
-        </form>
+  const { name, email } = session.user;
+
+  return (
+    <div className="flex flex-col h-full gap-4 pb-4">
+      <div className="text-center sm:text-start">
+        <h2 className="text-3xl font-bold tracking-tight">Profile</h2>
+        <p className="text-muted-foreground">
+          Your profile information and settings.
+        </p>
       </div>
-    </main>
+      <form className="space-y-4">
+        <Label className="flex flex-col gap-2">
+          Name
+          <Input value={name || ''} readOnly />
+        </Label>
+        <Label className="flex flex-col gap-2">
+          Email
+          <Input value={email || ''} readOnly />
+        </Label>
+      </form>
+
+      <form
+        className="mt-auto"
+        action={async () => {
+          'use server';
+
+          await signOut();
+        }}
+      >
+        <Button className="w-full" variant={'outline'}>
+          Logout
+        </Button>
+      </form>
+    </div>
   );
 }
