@@ -1,90 +1,49 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { signOut, useSession } from 'next-auth/react';
-import { useMutation } from '@tanstack/react-query';
-import { updateUser } from '@/actions/user/controller';
-import { toast } from 'sonner';
-import { LoadingButton } from '@/components/ui/loading-button';
 
-export default function Page() {
-  const { data: session, status } = useSession();
+import { auth, signOut } from '@/auth';
 
-  if (status === 'unauthenticated') {
-    toast.error('You are not authenticated');
+export default async function Page() {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    throw new Error('Unauthorized');
   }
 
-  const mutation = useMutation({
-    mutationFn: updateUser,
-    onSuccess: () => {
-      toast.success('User updated successfully');
-    },
-    onError: (error) => {
-      toast(error.message);
-    },
-  });
-
-  if (!session) {
-    toast.error('User session data is incomplete. Please log in again.');
-    return null;
-  }
-
-  const handleSaveChanges = () => {
-    if (!session?.user?.id || !session?.user?.name || !session?.user?.email) {
-      toast.error(
-        'User session id, email or name is incomplete. Please log in again.',
-      );
-      return;
-    }
-
-    mutation.mutate({
-      name: session.user.name,
-      id: session.user.id,
-    });
-  };
+  const { name, email } = session.user;
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
+    <div className="flex flex-col h-full gap-4 pb-4">
+      <div className="text-center sm:text-start">
+        <h2 className="text-3xl font-bold tracking-tight">Profile</h2>
         <p className="text-muted-foreground">
-          Manage your account settings and set e-mail preferences.
+          Your profile information and settings.
         </p>
       </div>
-      <div className="space-y-2 max-w-md w-full">
-        <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          defaultValue={session?.user?.name || ''}
-          onChange={(e) => {
-            if (session?.user) session.user.name = e.target.value;
-          }}
-        />
-      </div>
-      <div className="space-y-2 max-w-md w-full">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" defaultValue={session?.user?.email || ''} readOnly />
-      </div>
-      <Button className="w-full sm:w-auto" variant="outline">
-        Change password
-      </Button>
-      <LoadingButton
-        className="w-full sm:w-auto ml-1"
-        onClick={handleSaveChanges}
-        disabled={mutation.isPending}
-        variant="default"
+      <form className="space-y-4">
+        <Label className="flex flex-col gap-2">
+          Name
+          <Input value={name || ''} readOnly />
+        </Label>
+        <Label className="flex flex-col gap-2">
+          Email
+          <Input value={email || ''} readOnly />
+        </Label>
+      </form>
+
+      <form
+        className="mt-auto"
+        action={async () => {
+          'use server';
+
+          await signOut();
+        }}
       >
-        Save changes
-      </LoadingButton>
-      <Button
-        className="w-full ml-1 sm:w-auto"
-        variant="outline"
-        onClick={() => signOut()}
-      >
-        Logout
-      </Button>
+        <Button className="w-full" variant={'outline'}>
+          Logout
+        </Button>
+      </form>
     </div>
   );
 }
