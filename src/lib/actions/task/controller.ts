@@ -6,9 +6,7 @@ import { taskService } from './service';
 import { Task } from '@prisma/client';
 
 export const getTasks = requireAuth(async ({ session }) => {
-  const tasks = await taskService.getUserTasks(session.user.id);
-  console.log('all tasks for', session.user.email, tasks);
-  return tasks;
+  return taskService.getUserTasks(session.user.id);
 });
 
 export const getTaskById = requireAuth(async ({ session }, id: Task['id']) => {
