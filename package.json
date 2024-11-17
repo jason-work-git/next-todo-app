@@ -10,7 +10,8 @@
     "format": "prettier . --write",
     "setup": "npx prisma generate && npx prisma migrate deploy",
     "build:seed": "tsc prisma/seed.ts --outDir prisma/compiled",
-    "seed": "npm run build:seed && npx prisma db seed"
+    "seed": "npm run build:seed && npx prisma db seed",
+    "admin": "npx prisma studio"
   },
   "prisma": {
     "seed": "node prisma/compiled/seed.js"

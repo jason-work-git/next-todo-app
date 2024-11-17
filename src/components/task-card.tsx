@@ -1,95 +1,92 @@
 'use client';
 
-import { Task } from '@prisma/client';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { updateTask } from '@/lib/actions/task/controller';
-import { cn } from '@/lib/utils';
+import { DateIcon } from './date-icon';
+
+import { Task } from '@prisma/client';
+import { cn, formatDate } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 
 export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
   task: Task;
+  showDueDate?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 };
 
 export const TaskCard = ({
-  task: { title, completed, id },
+  task: { id, title, description, completed, dueDate },
+  showDueDate = true,
   ref,
   className,
   ...props
 }: TaskCardProps) => {
   const router = useRouter();
 
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationFn: updateTask,
-    onMutate: async (newTask) => {
-      const previousTasks = queryClient.getQueryData([
-        'tasks',
-        'today',
-      ]) as Task[];
-
-      queryClient.setQueryData(['tasks', 'today'], (oldTasks: Task[]) =>
-        oldTasks.map((task) =>
-          task.id === newTask.id
-            ? { ...task, completed: newTask.completed }
-            : task,
-        ),
-      );
-
-      return { previousTasks };
-    },
-    onError: (_, __, context: { previousTasks: Task[] } | undefined) => {
-      queryClient.setQueryData(['tasks', 'today'], context?.previousTasks);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ['tasks', 'today'],
-      });
-
-      queryClient.refetchQueries({
-        queryKey: ['tasks', id],
-      });
-    },
-  });
+  const { mutate } = useUpdateTaskMutation();
 
   const onCheckedChange = async (value: boolean) => {
     mutate({ id, completed: value });
   };
 
-  const onClick = async () => {
+  const onClick = () => {
     router.push(`?taskId=${id}`);
   };
 
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick();
+    }
+  };
   return (
     <Card
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={onKeyDown}
       className={cn(
         'cursor-pointer active:scale-[.97] transition-transform duration-200 has-[.checkbox:active]:scale-100',
+        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
         className,
       )}
       ref={ref}
       {...props}
     >
-      <CardHeader className="p-4 flex-row gap-2 items-center">
-        <Checkbox
-          className="checkbox size-5 rounded-full"
-          onCheckedChange={onCheckedChange}
-          onClick={(e) => e.stopPropagation()}
-          checked={completed}
-        />
-        <CardTitle
-          className={cn(
-            '!m-0',
-            'peer-data-[state=checked]:line-through peer-data-[state=checked]:text-muted-foreground',
-          )}
-        >
-          {title}
-        </CardTitle>
-        {/* <span className="text-muted-foreground text-xs">test</span> */}
+      <CardHeader className="p-4 space-y-0">
+        <div className="flex flex-row gap-2 items-center">
+          <Checkbox
+            className="checkbox size-5 rounded-full"
+            onCheckedChange={onCheckedChange}
+            onKeyDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            checked={completed}
+          />
+          <CardTitle
+            className={cn(
+              '!m-0',
+              'peer-data-[state=checked]:line-through peer-data-[state=checked]:text-muted-foreground',
+              'overflow-hidden text-ellipsis',
+            )}
+          >
+            {title}
+          </CardTitle>
+        </div>
+
+        {description && (
+          <span className="pl-7 !mt-0 text-muted-foreground text-sm text-nowrap overflow-hidden text-ellipsis">
+            {description}
+          </span>
+        )}
+
+        {dueDate && showDueDate && (
+          <span className="pl-7 flex gap-1 items-center text-primary text-sm text-nowrap overflow-hidden text-ellipsis">
+            <DateIcon date={dueDate} className="size-3.5" />
+            {dueDate ? formatDate(dueDate) : 'No due date'}
+          </span>
+        )}
       </CardHeader>
     </Card>
   );

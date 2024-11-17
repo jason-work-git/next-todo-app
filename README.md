@@ -37,6 +37,14 @@ cp .env.example .env
 
 Edit the `.env` file to match the structure provided in `.env.example`.
 
+#### How to Obtain the Auth Secret
+
+One option is to generate a secret using the following command:
+
+```
+openssl rand -base64 32
+```
+
 #### How to Obtain the Database URL
 
 One option is to use [Vercel’s free storage](https://vercel.com/docs/storage/vercel-postgres) to create a PostgreSQL database.
@@ -97,16 +105,17 @@ npm run seed
 
 The project includes several npm scripts to streamline development:
 
-| Script               | Description                                           |
-| -------------------- | ----------------------------------------------------- |
-| `npm run dev`        | Start the development server                          |
-| `npm run build`      | Build the project for production                      |
-| `npm run start`      | Start the production server                           |
-| `npm run lint`       | Check for linting errors                              |
-| `npm run format`     | Format all source files                               |
-| `npm run setup`      | Generate Prisma client and deploy database migrations |
-| `npm run build:seed` | Compile the seed script                               |
-| `npm run seed`       | Seed the database with mock data (optional)           |
+| Script               | Description                                                                    |
+| -------------------- | ------------------------------------------------------------------------------ |
+| `npm run dev`        | Start the development server                                                   |
+| `npm run build`      | Build the project for production                                               |
+| `npm run start`      | Start the production server                                                    |
+| `npm run lint`       | Check for linting errors                                                       |
+| `npm run format`     | Format all source files                                                        |
+| `npm run setup`      | Generate Prisma client and deploy database migrations                          |
+| `npm run build:seed` | Compile the seed script                                                        |
+| `npm run seed`       | Seed the database with mock data (optional)                                    |
+| `npm run admin`      | Open the Prisma Studio (database GUI with all schema and models) - admin panel |
 
 ## Technologies Used
 

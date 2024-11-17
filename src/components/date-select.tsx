@@ -1,5 +1,11 @@
 'use client';
 
+import { useState } from 'react';
+import { formatDate, getNextWeek, getToday, getTomorrow } from '@/lib/utils';
+
+import { DateIcon } from './date-icon';
+import { Button, ButtonProps } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Drawer,
   DrawerClose,
@@ -10,61 +16,32 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { formatDate, getNextWeek, getToday, getTomorrow } from '@/lib/utils';
-import { Calendar } from '@/components/ui/calendar';
-import { useState } from 'react';
-import { Button, ButtonProps } from '@/components/ui/button';
-
-import {
-  CalendarClock,
-  CalendarDays,
-  CalendarOff,
-  Sunrise,
-} from 'lucide-react';
-
-// TODO: fix this bullshit
-const getIcon = (type: string) => {
-  const icons: Record<string, JSX.Element> = {
-    today: <CalendarClock />,
-    tomorrow: <Sunrise />,
-    'no due date': <CalendarOff />,
-  };
-
-  return icons[type] || <CalendarDays />;
-};
 
 type Props = ButtonProps & {
-  onSelectValue: (value: Date | null) => void;
-  initialDate: Date | null;
+  onSelectDate: (value: Date | null) => void;
+  selectedDate: Date | null;
 };
 
-export const DateSelect = ({
-  onSelectValue: onSelect,
-  initialDate,
-  ...props
-}: Props) => {
-  const [dueDate, setDueDate] = useState<Date | null>(initialDate);
+export const DateSelect = ({ onSelectDate, selectedDate, ...props }: Props) => {
+  const [dueDate, setDueDate] = useState<Date | null>(selectedDate);
   const [isOpened, setIsOpened] = useState(false);
 
-  const formattedDate = initialDate ? formatDate(initialDate) : 'No due date';
-  const icon = getIcon(formattedDate.toLowerCase());
-
   const select = (value: Date | null) => {
-    onSelect(value);
+    onSelectDate(value);
     setIsOpened(false);
   };
 
   return (
     <Drawer
       open={isOpened}
-      onClose={() => setDueDate(initialDate)}
+      onClose={() => setDueDate(selectedDate)}
       onOpenChange={setIsOpened}
       nested
     >
       <DrawerTrigger asChild>
         <Button {...props} variant={'outline'}>
-          {icon}
-          {formattedDate}
+          <DateIcon date={selectedDate || undefined} />
+          {dueDate ? formatDate(dueDate) : 'No due date'}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -85,19 +62,19 @@ export const DateSelect = ({
         />
         <div className="p-4 grid grid-cols-2 gap-3">
           <Button onClick={() => select(getToday())} variant={'outline'}>
-            {getIcon('today')}
+            <DateIcon date={getToday()} />
             Today
           </Button>
           <Button onClick={() => select(getTomorrow())} variant={'outline'}>
-            {getIcon('tomorrow')}
+            <DateIcon date={getTomorrow()} />
             Tomorrow
           </Button>
           <Button onClick={() => select(getNextWeek())} variant={'outline'}>
-            {getIcon('')}
+            <DateIcon date={getNextWeek()} />
             Next week
           </Button>
           <Button onClick={() => select(null)} variant="secondary">
-            {getIcon('no due date')}
+            <DateIcon />
             No date
           </Button>
         </div>

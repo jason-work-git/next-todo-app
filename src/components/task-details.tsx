@@ -1,8 +1,8 @@
 'use client';
 
-import { updateTask, getTaskById } from '@/lib/actions/task/controller';
+import { getTaskById } from '@/lib/actions/task/controller';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { DateSelect } from '@/components/date-select';
 import {
@@ -16,34 +16,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 
 import { Task } from '@prisma/client';
+import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
+import { DeleteTaskButton } from './delete-task-button';
+import { useTaskDrawerData } from './task-drawer-provider';
 
 export const Test = ({ task }: { task: Task }) => {
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationFn: updateTask,
-    onMutate: async (newTask) => {
-      const previousTask = queryClient.getQueryData(['tasks', task.id]) as Task;
-
-      queryClient.setQueryData(['tasks', task.id], (oldTask: Task) =>
-        oldTask.id === newTask.id ? { ...oldTask, ...newTask } : oldTask,
-      );
-
-      return { previousTask };
-    },
-    onError: (_, __, context: { previousTask: Task } | undefined) => {
-      queryClient.setQueryData(['tasks', task.id], context?.previousTask);
-    },
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ['tasks', task.id],
-      });
-
-      queryClient.refetchQueries({
-        queryKey: ['tasks', 'today'],
-      });
-    },
-  });
+  const { mutate } = useUpdateTaskMutation();
+  const { close } = useTaskDrawerData();
 
   return (
     <>
@@ -69,16 +48,27 @@ export const Test = ({ task }: { task: Task }) => {
       </DrawerHeader>
       <div className="px-4">
         <DateSelect
-          onSelectValue={(dueDate) => {
+          onSelectDate={(dueDate) => {
             mutate({ id: task.id, dueDate: dueDate });
           }}
-          initialDate={task.dueDate}
+          selectedDate={task.dueDate}
         />
       </div>
 
       <DrawerFooter>
-        <Button>Save</Button>
+        <Button disabled>Save</Button>
+
+        <DeleteTaskButton taskId={task.id} onDelete={close} />
       </DrawerFooter>
+    </>
+  );
+};
+
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <>
+      <DrawerTitle>{children}</DrawerTitle>
+      <DrawerDescription hidden>{children}</DrawerDescription>
     </>
   );
 };
@@ -94,15 +84,15 @@ export function TaskDetails({ taskId }: { taskId: string }) {
   });
 
   if (isLoading) {
-    return <DrawerTitle>Loading...</DrawerTitle>;
+    return <Layout>Loading...</Layout>;
   }
 
   if (error) {
-    return <DrawerTitle>Error: {error.message}</DrawerTitle>;
+    return <Layout>Error: {error.message}</Layout>;
   }
 
   if (!task) {
-    return <DrawerTitle>Task not found</DrawerTitle>;
+    return <Layout>Task not found</Layout>;
   }
 
   return <Test task={task} />;

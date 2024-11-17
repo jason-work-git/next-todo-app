@@ -3,26 +3,27 @@
 import { AddTaskButton } from '@/components/add-task-button';
 import { TaskCard } from '@/components/task-card';
 
-import { getTodayTasks } from '@/lib/actions/task/controller';
-
-import { getFormattedDate } from '@/lib/utils';
+import { getTasks } from '@/lib/actions/task/controller';
 import { useQuery } from '@tanstack/react-query';
+import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
 
 export default function MainPage() {
   const formattedToday = getFormattedDate(new Date());
 
-  const { data: tasks, isLoading } = useQuery({
-    queryFn: getTodayTasks,
-    queryKey: ['tasks', 'today'],
+  const { data, isLoading } = useQuery({
+    queryFn: getTasks,
+    queryKey: ['tasks'],
   });
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  if (!tasks) {
+  if (!data) {
     return <div>No tasks found</div>;
   }
+
+  const tasks = filterTodayTasks(data);
 
   return (
     <>
@@ -34,11 +35,11 @@ export default function MainPage() {
         {formattedToday}
       </h2>
 
-      <div className="flex-grow overflow-y-auto space-y-2">
+      <div className="flex-grow overflow-y-auto space-y-2 p-px">
         {tasks.map((task) => {
-          return <TaskCard key={task.id} task={task} />;
+          return <TaskCard showDueDate={false} key={task.id} task={task} />;
         })}
-        <AddTaskButton />
+        <AddTaskButton defaultDueDate={new Date()} />
       </div>
     </>
   );
