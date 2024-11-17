@@ -26,10 +26,11 @@ export default function Page() {
     },
   });
   const handleSaveChanges = () => {
-    if (!session?.user) {
-      toast.error('Session or user data is missing');
+    if (!session?.user?.id) {
+      toast.error('User ID is missing');
       return;
     }
+
     mutation.mutate({
       name: session.user.name,
       id: session.user.id,
