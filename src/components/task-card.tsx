@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { DateIcon } from './date-icon';
+import { DateIcon } from './ui/date-icon';
 
 import { Task } from '@prisma/client';
 import { cn, formatDate } from '@/lib/utils';
