@@ -102,8 +102,8 @@ export const AddTaskButton = ({
                 placeholder="Some important description"
               />
             </Label>
-            <Label className="flex flex-col gap-2 items-start">
-              Due date
+            <div className="flex flex-col gap-2 items-start">
+              <span className="text-sm font-medium leading-none">Due date</span>
               <DateSelect
                 disabled={isPending}
                 selectedDate={formData.dueDate}
@@ -111,7 +111,7 @@ export const AddTaskButton = ({
                   setFormData({ ...formData, dueDate: value })
                 }
               />
-            </Label>
+            </div>
           </div>
 
           <DrawerFooter>
