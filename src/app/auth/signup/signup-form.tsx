@@ -18,11 +18,7 @@ export default function SignUpForm() {
       if (isRedirectError(error)) {
         return;
       }
-      toast.error(error.message, {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
+      toast.error(error.message);
     },
   });
 
