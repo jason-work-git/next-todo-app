@@ -41,7 +41,7 @@ export const DateSelect = ({ onSelectDate, selectedDate, ...props }: Props) => {
       <DrawerTrigger asChild>
         <Button {...props} variant={'outline'}>
           <DateIcon date={selectedDate || undefined} />
-          {dueDate ? formatDate(dueDate) : 'No due date'}
+          {selectedDate ? formatDate(selectedDate) : 'No due date'}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
