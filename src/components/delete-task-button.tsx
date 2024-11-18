@@ -19,7 +19,10 @@ export const DeleteTaskButton = ({
   taskId,
   onDelete,
   ...props
-}: ButtonProps & { taskId: Task['id']; onDelete?: () => void }) => {
+}: Omit<ButtonProps, 'children' | 'asChild'> & {
+  taskId: Task['id'];
+  onDelete?: () => void;
+}) => {
   const [open, setOpen] = useState(false);
   const { mutate } = useDeleteTaskMutation({
     onMutate: () => {

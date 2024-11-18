@@ -25,7 +25,7 @@ import { useState } from 'react';
 export const AddTaskButton = ({
   defaultDueDate = null,
   ...props
-}: ButtonProps & {
+}: Omit<ButtonProps, 'children' | 'asChild'> & {
   defaultDueDate?: Date | null;
 }) => {
   const [isOpened, setIsOpened] = useState(false);
@@ -36,7 +36,7 @@ export const AddTaskButton = ({
     dueDate: defaultDueDate,
   };
 
-  // TODO: add hookform later
+  // TODO: add hookform later maybe
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
