@@ -18,11 +18,7 @@ export default function LoginForm() {
   const { isPending, mutate } = useMutation({
     mutationFn: login,
     onError: (error) => {
-      toast.error(error.message, {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
+      toast.error(error.message);
     },
     onSuccess: () => {
       const callbackUrl = searchParams.get('callbackUrl');

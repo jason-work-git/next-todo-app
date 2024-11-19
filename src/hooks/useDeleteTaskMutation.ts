@@ -64,22 +64,14 @@ export default function useDeleteTaskMutation({
         );
       }
 
-      toast.error('Failed to delete task', {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
+      toast.error('Failed to delete task');
 
       if (onError) {
         onError(error, variables, context);
       }
     },
     onSuccess: (deletedTask, variables, context) => {
-      toast.success('Task deleted successfully', {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
+      toast.success('Task deleted successfully');
 
       if (onSuccess) {
         onSuccess(deletedTask, variables, context);

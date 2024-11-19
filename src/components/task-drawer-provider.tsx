@@ -11,19 +11,37 @@ import {
 } from 'react';
 
 import { TaskDetails } from '@/components/task-details';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
+import { useQuery } from '@tanstack/react-query';
+import { getTaskById } from '@/actions/task/controller';
+import { Task } from '@prisma/client';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
   setOpen: (open: boolean) => void;
   close: () => void;
-  taskId: string | null;
+  task: Task | null;
 }>({
   open: false,
   setOpen: () => {},
   close: () => {},
-  taskId: null,
+  task: null,
 });
+
+const TempLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <DrawerHeader>
+      <DrawerTitle>{children}</DrawerTitle>
+      <DrawerDescription hidden>No description</DrawerDescription>
+    </DrawerHeader>
+  );
+};
 
 function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -33,6 +51,21 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
   const taskId = searchParams.get('taskId');
 
   const [open, setOpen] = useState(!!taskId);
+
+  const {
+    data: task,
+    isLoading,
+    error,
+  } = useQuery({
+    enabled: !!taskId,
+    queryFn: () => {
+      if (taskId) {
+        return getTaskById(taskId);
+      }
+      return undefined;
+    },
+    queryKey: ['tasks', taskId],
+  });
 
   useEffect(() => {
     setOpen(!!taskId);
@@ -46,10 +79,14 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
   }, [pathname, router, searchParams]);
 
   return (
-    <TaskDrawerContext.Provider value={{ open, setOpen, close, taskId }}>
+    <TaskDrawerContext.Provider
+      value={{ open, setOpen, close, task: task || null }}
+    >
       <Drawer open={open} onOpenChange={setOpen} onClose={close}>
         <DrawerContent>
-          {taskId && <TaskDetails taskId={taskId} />}
+          {isLoading && <TempLayout>Loading...</TempLayout>}
+          {error && <TempLayout>{error.message}</TempLayout>}
+          {task && <TaskDetails task={task} />}
         </DrawerContent>
       </Drawer>
       {children}

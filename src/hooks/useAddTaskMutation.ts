@@ -23,11 +23,7 @@ export default function useAddTaskMutation({
   const mutation = useMutation<Task, Error, AddTaskDto>({
     mutationFn: addTask,
     onError: (error, variables, context) => {
-      toast.error(error.message, {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
+      toast.error(error.message);
 
       if (onError) {
         onError(error, variables, context);
@@ -45,11 +41,7 @@ export default function useAddTaskMutation({
         return [...oldTasks, newTask];
       });
 
-      toast.success('Task added successfully', {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
+      toast.success('Task added successfully');
 
       if (onSuccess) {
         onSuccess(newTask, variables, context);
