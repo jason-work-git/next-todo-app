@@ -22,7 +22,7 @@ import { Task } from '@prisma/client';
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 import { DeleteTaskButton } from './delete-task-button';
 import { useTaskDrawerData } from './task-drawer-provider';
-import { Label } from '@radix-ui/react-label';
+import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { useState } from 'react';
@@ -72,7 +72,7 @@ const EditTaskButton = ({
           <DrawerDescription>Provide new task details</DrawerDescription>
         </DrawerHeader>
         <form onSubmit={onSubmit} className="px-4 space-y-2">
-          <Label>
+          <Label className="flex flex-col gap-2">
             Title
             <Input
               name="title"
@@ -81,7 +81,7 @@ const EditTaskButton = ({
               onChange={onChange}
             />
           </Label>
-          <Label>
+          <Label className="flex flex-col gap-2">
             Description
             <Textarea
               name="description"
