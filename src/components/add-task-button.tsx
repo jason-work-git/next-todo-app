@@ -62,7 +62,7 @@ export const AddTaskButton = ({
   };
 
   return (
-    <Drawer open={isOpened} onOpenChange={setIsOpened}>
+    <Drawer repositionInputs={false} open={isOpened} onOpenChange={setIsOpened}>
       <DrawerTrigger asChild>
         <Button {...props} className="w-full gap-1">
           <Plus className="!size-5" />
