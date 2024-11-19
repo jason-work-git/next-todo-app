@@ -6,7 +6,6 @@ import { TaskCard } from '@/components/task-card';
 import { getTasks } from '@/actions/task/controller';
 import { useQuery } from '@tanstack/react-query';
 import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MainPage() {
   const formattedToday = getFormattedDate(new Date());
@@ -17,7 +16,7 @@ export default function MainPage() {
   });
 
   if (isLoading) {
-    return <Skeleton>Loading...</Skeleton>;
+    return <div>Loading...</div>;
   }
 
   if (!data) {
