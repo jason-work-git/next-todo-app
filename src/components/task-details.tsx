@@ -19,6 +19,7 @@ import { Task } from '@prisma/client';
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 import { DeleteTaskButton } from './delete-task-button';
 import { useTaskDrawerData } from './task-drawer-provider';
+import { Skeleton } from './ui/skeleton';
 
 export const Test = ({ task }: { task: Task }) => {
   const { mutate } = useUpdateTaskMutation();
@@ -84,7 +85,7 @@ export function TaskDetails({ taskId }: { taskId: string }) {
   });
 
   if (isLoading) {
-    return <Layout>Loading...</Layout>;
+    return <Skeleton>Loading...</Skeleton>;
   }
 
   if (error) {
