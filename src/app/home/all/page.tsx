@@ -117,7 +117,7 @@ export default function AllPage() {
         ))}
 
         <AddTaskButton
-          className="fixed bottom-20 right-8 h-10"
+          className="fixed bottom-20 right-8"
           defaultDueDate={new Date()}
         />
       </div>

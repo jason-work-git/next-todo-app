@@ -46,7 +46,7 @@ export default function MainPage() {
           return <TaskCard showDueDate={false} key={task.id} task={task} />;
         })}
         <AddTaskButton
-          className="fixed bottom-20 right-8 h-10"
+          className="fixed bottom-20 right-8 "
           defaultDueDate={new Date()}
         />
       </div>

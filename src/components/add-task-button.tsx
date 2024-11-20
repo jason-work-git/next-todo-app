@@ -64,9 +64,12 @@ export const AddTaskButton = ({
   return (
     <Drawer open={isOpened} onOpenChange={setIsOpened}>
       <DrawerTrigger asChild>
-        <Button {...props} className={cn('gap-1', className)}>
-          <Plus className="!size-5" />
-          Add task
+        <Button
+          {...props}
+          size={'icon'}
+          className={cn('gap-1 size-12 rounded-lg', className)}
+        >
+          <Plus className="!size-7" />
         </Button>
       </DrawerTrigger>
       <DrawerContent>
