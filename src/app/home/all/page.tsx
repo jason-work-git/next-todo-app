@@ -3,6 +3,14 @@
 import { getTasks } from '@/actions/task/controller';
 import { AddTaskButton } from '@/components/add-task-button';
 import { TaskCard } from '@/components/task-card';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -12,9 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { SortOptions, getSortedTasks } from '@/lib/utils';
+import {
+  SortOptions,
+  filterUncompletedTasks,
+  getSortedTasks,
+} from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowDownUp } from 'lucide-react';
+import { ArrowDownUp, FilterIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const SortSelect = ({
@@ -52,13 +64,16 @@ const SortSelect = ({
 
 export default function AllPage() {
   const [sort, setSort] = useState<SortOptions>(SortOptions.CREATED_ASC);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryFn: getTasks,
     queryKey: ['tasks'],
   });
 
-  const tasks = getSortedTasks(data || [], sort);
+  const tasks = showCompleted
+    ? getSortedTasks(data || [], sort)
+    : filterUncompletedTasks(getSortedTasks(data || [], sort));
 
   return (
     <>
@@ -66,8 +81,26 @@ export default function AllPage() {
         <h1 className="text-xl font-semibold text-center">All tasks</h1>
       </header>
 
-      <div className="mb-4">
+      <div className="mb-4 flex-wrap flex gap-2">
         <SortSelect value={sort} onValueChange={setSort} />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full sm:w-auto">
+              <FilterIcon />
+              Filters
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto">
+            <h3 className="font-semibold mb-2">Filters</h3>
+            <Label className="flex items-center gap-1">
+              <Checkbox
+                checked={showCompleted}
+                onCheckedChange={(value: boolean) => setShowCompleted(value)}
+              />
+              Show completed tasks
+            </Label>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {tasks.length === 0 && (
