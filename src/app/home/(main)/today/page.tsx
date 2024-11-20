@@ -6,6 +6,7 @@ import { TaskCard } from '@/components/task-card';
 import { getTasks } from '@/actions/task/controller';
 import { useQuery } from '@tanstack/react-query';
 import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MainPage() {
   const formattedToday = getFormattedDate(new Date());
@@ -15,15 +16,7 @@ export default function MainPage() {
     queryKey: ['tasks'],
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!data) {
-    return <div>No tasks found</div>;
-  }
-
-  const tasks = filterTodayTasks(data);
+  const tasks = data ? filterTodayTasks(data) : [];
 
   return (
     <>
@@ -35,12 +28,20 @@ export default function MainPage() {
         {formattedToday}
       </h2>
 
-      <div className="flex-grow overflow-y-auto space-y-2 p-px">
-        {tasks.map((task) => {
-          return <TaskCard showDueDate={false} key={task.id} task={task} />;
-        })}
-        <AddTaskButton defaultDueDate={new Date()} />
-      </div>
+      {isLoading ? (
+        <>
+          <Skeleton className="w-full h-[40px] mb-5" />
+        </>
+      ) : tasks.length > 0 ? (
+        <div className="flex-grow overflow-y-auto space-y-2 p-px">
+          {tasks.map((task) => {
+            return <TaskCard showDueDate={false} key={task.id} task={task} />;
+          })}
+          <AddTaskButton defaultDueDate={new Date()} />
+        </div>
+      ) : (
+        <div>No tasks found</div>
+      )}
     </>
   );
 }
