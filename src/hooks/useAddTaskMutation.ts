@@ -7,30 +7,33 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { v4 as uuidv4 } from 'uuid';
+
+type Dto = Required<AddTaskDto>;
+
+type TContext = {
+  previousTasks: Task[] | undefined;
+};
 
 type UseAddTaskMutationOptions = Omit<
-  UseMutationOptions<Task, Error, AddTaskDto>,
-  'mutationFn'
->;
+  UseMutationOptions<Task, Error, Dto, TContext>,
+  'mutationFn' | 'onMutate'
+> & {
+  onMutate?: (variables: Dto) => void;
+};
 
 export default function useAddTaskMutation({
   onError,
   onSuccess,
+  onMutate,
   ...options
 }: UseAddTaskMutationOptions = {}) {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<Task, Error, AddTaskDto>({
+  const mutation = useMutation<Task, Error, Dto, TContext>({
     mutationFn: addTask,
-    onError: (error, variables, context) => {
-      toast.error(error.message);
-
-      if (onError) {
-        onError(error, variables, context);
-      }
-    },
-    onSuccess: (newTask, variables, context) => {
-      // TODO: when adding new task, add id on creation and update queryData on mutate
+    onMutate: (newTask) => {
+      const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
       queryClient.setQueryData<Task>(['tasks', newTask.id], newTask);
 
       queryClient.setQueryData<Task[]>(['tasks'], (oldTasks) => {
@@ -41,6 +44,24 @@ export default function useAddTaskMutation({
         return [...oldTasks, newTask];
       });
 
+      if (onMutate) {
+        onMutate(newTask);
+      }
+
+      return { previousTasks };
+    },
+    onError: (error, variables, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(['tasks'], context.previousTasks);
+      }
+
+      toast.error(error.message);
+
+      if (onError) {
+        onError(error, variables, context);
+      }
+    },
+    onSuccess: (newTask, variables, context) => {
       toast.success('Task added successfully');
 
       if (onSuccess) {
@@ -50,5 +71,19 @@ export default function useAddTaskMutation({
     ...options,
   });
 
-  return mutation;
+  const mutate = (
+    data: Pick<AddTaskDto, 'title' | 'description' | 'dueDate'>,
+  ) => {
+    const createdAt = new Date();
+
+    mutation.mutate({
+      id: uuidv4(),
+      completed: false,
+      createdAt,
+      updatedAt: createdAt,
+      ...data,
+    });
+  };
+
+  return { ...mutation, mutate };
 }

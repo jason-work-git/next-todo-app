@@ -45,11 +45,9 @@ export const AddTaskButton = ({
     dueDate: Date | null;
   }>(defaultValues);
 
-  const { mutate, isPending } = useAddTaskMutation({
-    onSuccess: () => {
+  const { mutate } = useAddTaskMutation({
+    onMutate: () => {
       setFormData(defaultValues);
-    },
-    onSettled: () => {
       setIsOpened(false);
     },
   });
@@ -82,7 +80,6 @@ export const AddTaskButton = ({
             <Label className="flex flex-col gap-2">
               Title
               <Input
-                disabled={isPending}
                 required
                 name="title"
                 value={formData.title}
@@ -95,7 +92,6 @@ export const AddTaskButton = ({
             <Label className="flex flex-col gap-2">
               Description
               <Textarea
-                disabled={isPending}
                 name="description"
                 value={formData.description}
                 onChange={(e) =>
@@ -107,7 +103,6 @@ export const AddTaskButton = ({
             <div className="flex flex-col gap-2 items-start">
               <span className="text-sm font-medium leading-none">Due date</span>
               <DateSelect
-                disabled={isPending}
                 selectedDate={formData.dueDate}
                 onSelectDate={(value) =>
                   setFormData({ ...formData, dueDate: value })
@@ -117,17 +112,9 @@ export const AddTaskButton = ({
           </div>
 
           <DrawerFooter>
-            <LoadingButton
-              disabled={isPending}
-              isLoading={isPending}
-              type="submit"
-            >
-              Add
-            </LoadingButton>
+            <LoadingButton type="submit">Add</LoadingButton>
             <DrawerClose asChild>
-              <Button disabled={isPending} variant="outline">
-                Cancel
-              </Button>
+              <Button variant="outline">Cancel</Button>
             </DrawerClose>
           </DrawerFooter>
         </form>

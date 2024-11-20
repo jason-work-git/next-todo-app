@@ -1,6 +1,7 @@
 import { Task } from '@prisma/client';
 
-export type AddTaskDto = Pick<Task, 'title' | 'description' | 'dueDate'>;
+export type AddTaskDto = Pick<Task, 'title' | 'description' | 'dueDate'> &
+  Partial<Pick<Task, 'id' | 'completed' | 'createdAt' | 'updatedAt'>>;
 
 export type UpdateTaskDto = Omit<
   Partial<Task> & {
