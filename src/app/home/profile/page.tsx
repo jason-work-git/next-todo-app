@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
 import { auth, signOut } from '@/auth';
+import { LogOut } from 'lucide-react';
 
 export default async function Page() {
   const session = await auth();
@@ -41,6 +42,7 @@ export default async function Page() {
         }}
       >
         <Button className="w-full" variant={'outline'}>
+          <LogOut />
           Logout
         </Button>
       </form>

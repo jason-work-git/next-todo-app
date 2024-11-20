@@ -35,7 +35,13 @@ export default function MainPage() {
         {formattedToday}
       </h2>
 
-      <div className="flex-grow overflow-y-auto space-y-2 p-px">
+      {tasks.length === 0 && (
+        <div className="text-center font-medium flex justify-center items-center h-full">
+          Nothing on your plate today, enjoy your free time! 🎉
+        </div>
+      )}
+
+      <div className="flex-grow overflow-y-auto space-y-2 p-px pb-4">
         {tasks.map((task) => {
           return <TaskCard showDueDate={false} key={task.id} task={task} />;
         })}
