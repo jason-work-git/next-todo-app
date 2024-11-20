@@ -21,9 +21,11 @@ import { DateSelect } from './date-select';
 
 import useAddTaskMutation from '@/hooks/useAddTaskMutation';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export const AddTaskButton = ({
   defaultDueDate = null,
+  className,
   ...props
 }: Omit<ButtonProps, 'children' | 'asChild'> & {
   defaultDueDate?: Date | null;
@@ -64,7 +66,7 @@ export const AddTaskButton = ({
   return (
     <Drawer open={isOpened} onOpenChange={setIsOpened}>
       <DrawerTrigger asChild>
-        <Button {...props} className="w-full gap-1">
+        <Button {...props} className={cn('gap-1', className)}>
           <Plus className="!size-5" />
           Add task
         </Button>
