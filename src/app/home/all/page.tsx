@@ -103,7 +103,7 @@ export default function AllPage() {
         </Popover>
       </div>
 
-      {tasks.length === 0 && (
+      {!isLoading && tasks.length === 0 && (
         <div className="text-center font-medium flex items-center justify-center h-full">
           You don&apos;t have any tasks yet. Try adding a new task.
         </div>
