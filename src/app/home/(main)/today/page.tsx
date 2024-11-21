@@ -32,15 +32,13 @@ export default function MainPage() {
         <>
           <Skeleton className="w-full h-[40px] mb-5" />
         </>
-      ) : tasks.length > 0 ? (
+      ) : (
         <div className="flex-grow overflow-y-auto space-y-2 p-px">
-          {tasks.map((task) => {
-            return <TaskCard showDueDate={false} key={task.id} task={task} />;
-          })}
+          {tasks.map((task) => (
+            <TaskCard showDueDate={false} key={task.id} task={task} />
+          ))}
           <AddTaskButton defaultDueDate={new Date()} />
         </div>
-      ) : (
-        <div>No tasks found</div>
       )}
     </>
   );
