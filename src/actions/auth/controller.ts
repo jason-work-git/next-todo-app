@@ -6,10 +6,8 @@ import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { userService } from '@/actions/user/service';
 import { generateVerificationToken } from '@/lib/utils';
-import prisma from '@/prisma-client';
 import { TokenType } from '@prisma/client';
-import resend from '@/lib/resend';
-import { EmailTemplate } from '@/components/email-templates/email-verification-template';
+import { mailService } from '../mail/service';
 
 export const register = async ({
   name,
@@ -23,7 +21,7 @@ export const register = async ({
   const existingUser = await userService.getUserByEmail(email);
 
   if (existingUser) {
-    throw new Error('User already exists');
+    throw new Error('User already exists.');
   }
 
   const hashedPassword = await hash(password, 12);
@@ -32,23 +30,17 @@ export const register = async ({
 
   const generatedToken = generateVerificationToken();
 
-  await prisma.token.create({
-    data: {
-      userId: user.id,
-      token: generatedToken,
-      type: TokenType.EMAIL_VERIFICATION,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
-    },
+  await mailService.createToken({
+    userId: user.id,
+    token: generatedToken,
+    type: TokenType.EMAIL_VERIFICATION,
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
   });
 
-  const { error } = await resend.emails.send({
-    from: 'Todo app <onboarding@resend.dev>',
-    to: [email],
-    subject: 'Verify your email',
-    react: EmailTemplate({
-      firstName: name,
-      verificationUrl: `${process.env.AUTH_URL}/auth/verify?token=${generatedToken}`,
-    }),
+  const { error } = await mailService.sendVerificationEmail({
+    name,
+    email,
+    generatedToken,
   });
 
   if (error) {

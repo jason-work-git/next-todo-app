@@ -11,6 +11,8 @@ import { LoadingButton } from '@/components/ui/loading-button';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { toast } from 'sonner';
 
+import { resendVerificationEmail } from '@/actions/mail/controller';
+
 export default function SignUpForm() {
   const { isPending, mutate } = useMutation({
     mutationFn: register,
@@ -19,11 +21,23 @@ export default function SignUpForm() {
         'Email verification was sent to your email, please check the inbox.',
       );
     },
-    onError: (error) => {
+    onError: (error, { email, name }) => {
       if (isRedirectError(error)) {
         return;
       }
-      toast.error(error.message);
+
+      toast.error(error.message, {
+        description: <>Hasn&apos;t receive the email?</>,
+        action: {
+          label: 'Resend',
+          onClick: async () => {
+            await resendVerificationEmail({ name, email });
+            toast.success(
+              'Email verification was sent to your email, please check the inbox.',
+            );
+          },
+        },
+      });
     },
   });
 
