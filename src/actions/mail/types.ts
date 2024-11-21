@@ -10,3 +10,5 @@ export type SendVerificationEmailDto = {
   name: User['name'];
   generatedToken: Token['token'];
 };
+
+export type SendPasswordResetEmailDto = SendVerificationEmailDto;

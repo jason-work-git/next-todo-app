@@ -2,6 +2,20 @@ import Link from 'next/link';
 import LoginForm from './login-form';
 import AuthProviders from '@/components/auth-providers';
 
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { mailService } from '@/actions/mail/service';
+import { generateVerificationToken } from '@/lib/utils';
+
 export default function LoginPage() {
   return (
     <main className="p-8 flex items-center justify-center min-h-dvh">
@@ -12,9 +26,44 @@ export default function LoginPage() {
         <LoginForm />
 
         {/* TODO: add this feature later */}
-        <span className="cursor-not-allowed text-xs self-end text-muted-foreground">
-          Forgot password?
-        </span>
+        <Dialog>
+          <DialogTrigger asChild>
+            <span className="cursor-pointer underline-offset-4 hover:underline text-xs self-end text-muted-foreground">
+              Forgot password?
+            </span>
+          </DialogTrigger>
+          <DialogContent className="rounded w-[400px]">
+            <form
+              action={async (formData) => {
+                'use server';
+
+                const email = formData.get('email') as string;
+
+                const generatedToken = generateVerificationToken();
+
+                await mailService.sendPasswordResetEmail({
+                  email,
+                  name: null,
+                  generatedToken,
+                });
+              }}
+            >
+              <DialogHeader>
+                <DialogTitle>Please provide your email</DialogTitle>
+                <DialogDescription>
+                  We&apos;ll send a password reset link to the provided email
+                  address
+                </DialogDescription>
+              </DialogHeader>
+
+              <Input className="my-4" type="email" required name="email" />
+
+              <DialogFooter>
+                <Button type="submit">Send</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
 
         <AuthProviders />
 
