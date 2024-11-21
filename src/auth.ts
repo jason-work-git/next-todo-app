@@ -84,6 +84,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("User with this email doesn't exist");
         }
 
+        if (!user.verified) {
+          return null;
+          throw new Error('User is not verified');
+        }
+
         const passwordsMatch = await compare(password, user.password);
 
         if (!passwordsMatch) {

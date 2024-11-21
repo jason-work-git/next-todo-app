@@ -1,11 +1,13 @@
 'use server';
 
-import { redirect } from 'next/navigation';
 import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { userService } from '@/actions/user/service';
+import { generateVerificationToken } from '@/lib/utils';
+import { TokenType } from '@prisma/client';
+import { mailService } from '../mail/service';
 
 export const register = async ({
   name,
@@ -19,13 +21,31 @@ export const register = async ({
   const existingUser = await userService.getUserByEmail(email);
 
   if (existingUser) {
-    throw new Error('User already exists');
+    throw new Error('User already exists.');
   }
 
   const hashedPassword = await hash(password, 12);
 
-  await userService.createUser(name, email, hashedPassword);
-  redirect('/auth/login');
+  const user = await userService.createUser(name, email, hashedPassword);
+
+  const generatedToken = generateVerificationToken();
+
+  await mailService.createToken({
+    userId: user.id,
+    token: generatedToken,
+    type: TokenType.EMAIL_VERIFICATION,
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
+  });
+
+  const { error } = await mailService.sendVerificationEmail({
+    name,
+    email,
+    generatedToken,
+  });
+
+  if (error) {
+    throw error;
+  }
 };
 
 export const login = async ({
@@ -46,7 +66,7 @@ export const login = async ({
       console.error(error);
       switch (error.type) {
         case 'CredentialsSignin':
-          throw new Error('Invalid credentials.');
+          throw new Error('Invalid credentials or user is not verified.');
         default:
           throw new Error('Something went wrong.');
       }

@@ -2,6 +2,7 @@ import { Task } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
 import { isToday } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
+import crypto from 'crypto';
 
 /**
  * A shorthand for `twMerge(clsx(inputs))`.
@@ -170,3 +171,9 @@ export const getSortedTasks = (tasks: Task[], sortOption: SortOptions) => {
       return tasks;
   }
 };
+
+export const generateVerificationToken = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
+// TODO: refactor this to folder because this file is too big and complex
