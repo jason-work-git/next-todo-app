@@ -72,11 +72,7 @@ export default function useUpdateTaskMutation({
         );
       }
 
-      toast.error('Failed to update task', {
-        richColors: true,
-        duration: 5000,
-        closeButton: true,
-      });
+      toast.error('Failed to update task');
 
       if (onError) {
         onError(error, variables, context);

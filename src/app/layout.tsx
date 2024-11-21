@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
-import QueryClientProvider from '@/components/query-client-provider';
+import QueryClientProvider from '@/components/providers/query-client-provider';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',

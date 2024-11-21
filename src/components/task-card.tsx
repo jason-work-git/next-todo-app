@@ -2,7 +2,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { DateIcon } from './date-icon';
+import { DateIcon } from './ui/date-icon';
 
 import { Task } from '@prisma/client';
 import { cn, formatDate } from '@/lib/utils';
@@ -81,9 +81,9 @@ export const TaskCard = ({
           </span>
         )}
 
-        {dueDate && showDueDate && (
+        {showDueDate && (
           <span className="pl-7 flex gap-1 items-center text-primary text-sm text-nowrap overflow-hidden text-ellipsis">
-            <DateIcon date={dueDate} className="size-3.5" />
+            <DateIcon date={dueDate || undefined} className="size-3.5" />
             {dueDate ? formatDate(dueDate) : 'No due date'}
           </span>
         )}

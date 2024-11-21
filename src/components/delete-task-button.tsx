@@ -19,7 +19,10 @@ export const DeleteTaskButton = ({
   taskId,
   onDelete,
   ...props
-}: ButtonProps & { taskId: Task['id']; onDelete?: () => void }) => {
+}: Omit<ButtonProps, 'children' | 'asChild'> & {
+  taskId: Task['id'];
+  onDelete?: () => void;
+}) => {
   const [open, setOpen] = useState(false);
   const { mutate } = useDeleteTaskMutation({
     onMutate: () => {
@@ -35,11 +38,7 @@ export const DeleteTaskButton = ({
   return (
     <Drawer open={open} onOpenChange={setOpen} nested>
       <DrawerTrigger asChild>
-        <Button
-          className="hover:bg-destructive hover:text-destructive-foreground"
-          variant={'outline'}
-          {...props}
-        >
+        <Button variant={'outline'} {...props}>
           Delete
         </Button>
       </DrawerTrigger>

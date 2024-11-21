@@ -21,11 +21,13 @@ import { DateSelect } from './date-select';
 
 import useAddTaskMutation from '@/hooks/useAddTaskMutation';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export const AddTaskButton = ({
   defaultDueDate = null,
+  className,
   ...props
-}: ButtonProps & {
+}: Omit<ButtonProps, 'children' | 'asChild'> & {
   defaultDueDate?: Date | null;
 }) => {
   const [isOpened, setIsOpened] = useState(false);
@@ -36,18 +38,16 @@ export const AddTaskButton = ({
     dueDate: defaultDueDate,
   };
 
-  // TODO: add hookform later
+  // TODO: add hookform later maybe
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
     dueDate: Date | null;
   }>(defaultValues);
 
-  const { mutate, isPending } = useAddTaskMutation({
-    onSuccess: () => {
+  const { mutate } = useAddTaskMutation({
+    onMutate: () => {
       setFormData(defaultValues);
-    },
-    onSettled: () => {
       setIsOpened(false);
     },
   });
@@ -64,9 +64,12 @@ export const AddTaskButton = ({
   return (
     <Drawer open={isOpened} onOpenChange={setIsOpened}>
       <DrawerTrigger asChild>
-        <Button {...props} className="w-full gap-1">
-          <Plus className="!size-5" />
-          Add task
+        <Button
+          {...props}
+          size={'icon'}
+          className={cn('gap-1 size-12 rounded-lg', className)}
+        >
+          <Plus className="!size-7" />
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -80,7 +83,6 @@ export const AddTaskButton = ({
             <Label className="flex flex-col gap-2">
               Title
               <Input
-                disabled={isPending}
                 required
                 name="title"
                 value={formData.title}
@@ -93,7 +95,6 @@ export const AddTaskButton = ({
             <Label className="flex flex-col gap-2">
               Description
               <Textarea
-                disabled={isPending}
                 name="description"
                 value={formData.description}
                 onChange={(e) =>
@@ -102,30 +103,21 @@ export const AddTaskButton = ({
                 placeholder="Some important description"
               />
             </Label>
-            <Label className="flex flex-col gap-2 items-start">
-              Due date
+            <div className="flex flex-col gap-2 items-start">
+              <span className="text-sm font-medium leading-none">Due date</span>
               <DateSelect
-                disabled={isPending}
                 selectedDate={formData.dueDate}
                 onSelectDate={(value) =>
                   setFormData({ ...formData, dueDate: value })
                 }
               />
-            </Label>
+            </div>
           </div>
 
           <DrawerFooter>
-            <LoadingButton
-              disabled={isPending}
-              isLoading={isPending}
-              type="submit"
-            >
-              Add
-            </LoadingButton>
+            <LoadingButton type="submit">Add</LoadingButton>
             <DrawerClose asChild>
-              <Button disabled={isPending} variant="outline">
-                Cancel
-              </Button>
+              <Button variant="outline">Cancel</Button>
             </DrawerClose>
           </DrawerFooter>
         </form>

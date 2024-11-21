@@ -2,6 +2,7 @@ import { Task } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
 import { isToday } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
+import crypto from 'crypto';
 
 /**
  * A shorthand for `twMerge(clsx(inputs))`.
@@ -137,3 +138,42 @@ export const filterTodayTasks = (tasks: Task[]) => {
 export const filterUncompletedTasks = (tasks: Task[]) => {
   return tasks.filter((task) => !task.completed);
 };
+
+export enum SortOptions {
+  CREATED_ASC = 'Date created (asc)',
+  CREATED_DESC = 'Date created (desc)',
+  DATE_ASC = 'Due date (asc)',
+  DATE_DESC = 'Due date (desc)',
+}
+
+export const getSortedTasks = (tasks: Task[], sortOption: SortOptions) => {
+  switch (sortOption) {
+    case SortOptions.DATE_ASC:
+      return tasks.toSorted((a, b) => {
+        const aDate = a.dueDate ? new Date(a.dueDate).getTime() : 0;
+        const bDate = b.dueDate ? new Date(b.dueDate).getTime() : 0;
+        return aDate - bDate;
+      });
+    case SortOptions.DATE_DESC:
+      return tasks.toSorted((a, b) => {
+        const aDate = a.dueDate ? new Date(a.dueDate).getTime() : 0;
+        const bDate = b.dueDate ? new Date(b.dueDate).getTime() : 0;
+        return bDate - aDate;
+      });
+    case SortOptions.CREATED_DESC:
+      return tasks.toSorted((a, b) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
+    case SortOptions.CREATED_ASC:
+    default:
+      return tasks;
+  }
+};
+
+export const generateVerificationToken = () => {
+  return crypto.randomBytes(32).toString('hex');
+};
+
+// TODO: refactor this to folder because this file is too big and complex
