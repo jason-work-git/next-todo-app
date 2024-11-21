@@ -94,7 +94,7 @@ export default async function VerificationPage({
           {verified && (
             <Button asChild>
               <Link
-                href={'/auth/signin'}
+                href={'/auth/login'}
                 className="bg-primary text-white text-sm font-medium hover:bg-primary/90 h-10 px-4 py-2 rounded-lg w-full text-center"
               >
                 Sign in
