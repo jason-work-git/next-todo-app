@@ -6,10 +6,9 @@ interface EmailTemplateProps {
 // tailwind doesn't work
 // TODO: style it later
 // maybe using react-email library to use tailwind and etc. but it isnt too important
-export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
-  firstName,
-  verificationUrl,
-}) => (
+export const EmailVerificationTemplate: React.FC<
+  Readonly<EmailTemplateProps>
+> = ({ firstName, verificationUrl }) => (
   <div
     style={{
       fontFamily: 'Arial, sans-serif',

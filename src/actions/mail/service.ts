@@ -1,18 +1,8 @@
-import { EmailTemplate } from '@/components/email-templates/email-verification-template';
 import resend from '@/lib/resend';
-import prisma from '@/prisma-client';
-import {
-  CreateTokenDto,
-  SendPasswordResetEmailDto,
-  SendVerificationEmailDto,
-} from './types';
-import { PasswordResetEmailTemplate } from '@/components/email-templates/email-password-reset-template';
+import { SendPasswordResetEmailDto, SendVerificationEmailDto } from './types';
 
-const createToken = (data: CreateTokenDto) => {
-  return prisma.token.create({
-    data,
-  });
-};
+import { EmailVerificationTemplate } from '@/components/email-templates/email-verification-template';
+import { PasswordResetEmailTemplate } from '@/components/email-templates/email-password-reset-template';
 
 const sendVerificationEmail = ({
   email,
@@ -23,7 +13,7 @@ const sendVerificationEmail = ({
     from: 'Todo app <onboarding@resend.dev>',
     to: [email],
     subject: 'Verify your email',
-    react: EmailTemplate({
+    react: EmailVerificationTemplate({
       firstName: name || email,
       verificationUrl: `${process.env.AUTH_URL}/auth/verify?token=${generatedToken}`,
     }),
@@ -47,7 +37,6 @@ const sendPasswordResetEmail = ({
 };
 
 export const mailService = {
-  createToken,
   sendVerificationEmail,
   sendPasswordResetEmail,
 };

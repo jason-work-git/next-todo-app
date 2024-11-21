@@ -4,10 +4,10 @@ import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
-import { userService } from '@/actions/user/service';
-import { generateVerificationToken } from '@/lib/utils';
 import { TokenType } from '@prisma/client';
-import { mailService } from '../mail/service';
+import { userService } from '@/actions/user/service';
+import { mailService } from '@/actions/mail/service';
+import { tokenService } from '@/actions/token/service';
 
 export const register = async ({
   name,
@@ -28,13 +28,11 @@ export const register = async ({
 
   const user = await userService.createUser(name, email, hashedPassword);
 
-  const generatedToken = generateVerificationToken();
+  const generatedToken = tokenService.generateVerificationToken();
 
-  await mailService.createToken({
+  await tokenService.createEmailVerificationToken({
     userId: user.id,
     token: generatedToken,
-    type: TokenType.EMAIL_VERIFICATION,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours
   });
 
   const { error } = await mailService.sendVerificationEmail({
@@ -74,4 +72,62 @@ export const login = async ({
 
     throw error;
   }
+};
+
+export const resendVerificationEmail = async ({
+  email,
+  name,
+}: {
+  email: string;
+  name: string | null;
+}) => {
+  const user = await userService.getUserByEmail(email);
+
+  if (!user) {
+    throw new Error('User does not exist.');
+  }
+
+  await tokenService.deactivatePreviousUserTokens({
+    userId: user.id,
+    type: TokenType.EMAIL_VERIFICATION,
+  });
+
+  const generatedToken = tokenService.generateVerificationToken();
+
+  await tokenService.createEmailVerificationToken({
+    userId: user.id,
+    token: generatedToken,
+  });
+
+  return mailService.sendVerificationEmail({
+    name,
+    email,
+    generatedToken,
+  });
+};
+
+export const requestPasswordReset = async (email: string) => {
+  const user = await userService.getUserByEmail(email);
+
+  if (!user) {
+    throw new Error("User with this email doesn't exist");
+  }
+
+  await tokenService.deactivatePreviousUserTokens({
+    userId: user.id,
+    type: TokenType.PASSWORD_RESET,
+  });
+
+  const generatedToken = tokenService.generateVerificationToken();
+
+  await tokenService.createPasswordResetToken({
+    userId: user.id,
+    token: generatedToken,
+  });
+
+  await mailService.sendPasswordResetEmail({
+    email,
+    name: user.name,
+    generatedToken,
+  });
 };

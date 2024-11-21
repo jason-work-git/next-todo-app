@@ -6,6 +6,10 @@ function getUserByEmail(email: User['email']) {
   return prisma.user.findUnique({ where: { email } });
 }
 
+function getUserById(id: User['id']) {
+  return prisma.user.findUnique({ where: { id } });
+}
+
 function createUser(name: string, email: string, password: string) {
   return prisma.user.create({
     data: { email, password, name },
@@ -21,6 +25,7 @@ function updateUser(userId: User['id'], data: UpdateUserDto) {
 
 export const userService = {
   getUserByEmail,
+  getUserById,
   createUser,
   updateUser,
 };
