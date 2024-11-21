@@ -14,6 +14,11 @@ import { toast } from 'sonner';
 export default function SignUpForm() {
   const { isPending, mutate } = useMutation({
     mutationFn: register,
+    onSuccess: () => {
+      toast.success(
+        'Email verification was sent to your email, please check the inbox.',
+      );
+    },
     onError: (error) => {
       if (isRedirectError(error)) {
         return;
