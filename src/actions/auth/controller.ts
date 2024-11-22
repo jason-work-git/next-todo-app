@@ -4,10 +4,11 @@ import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
 import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
-import { TokenType } from '@prisma/client';
+import { Token, TokenType, User } from '@prisma/client';
 import { userService } from '@/actions/user/service';
 import { mailService } from '@/actions/mail/service';
 import { tokenService } from '@/actions/token/service';
+import { getVerifiedToken } from '../token/controller';
 
 export const register = async ({
   name,
@@ -15,8 +16,8 @@ export const register = async ({
   password,
 }: {
   name: string;
-  email: string;
-  password: string;
+  email: User['email'];
+  password: User['password'];
 }) => {
   const existingUser = await userService.getUserByEmail(email);
 
@@ -50,8 +51,8 @@ export const login = async ({
   email,
   password,
 }: {
-  email: string;
-  password: string;
+  email: User['email'];
+  password: User['password'];
 }) => {
   try {
     await signIn('credentials', { email, password });
@@ -78,8 +79,8 @@ export const resendVerificationEmail = async ({
   email,
   name,
 }: {
-  email: string;
-  name: string | null;
+  email: User['email'];
+  name: User['name'];
 }) => {
   const user = await userService.getUserByEmail(email);
 
@@ -106,11 +107,27 @@ export const resendVerificationEmail = async ({
   });
 };
 
-export const requestPasswordReset = async (email: string) => {
+export const verifyUser = async (token: Token['token']) => {
+  const { verifiedToken, user } = await getVerifiedToken(token);
+
+  if (verifiedToken.type !== TokenType.EMAIL_VERIFICATION) {
+    throw new Error('This token is not suitable for email verification.');
+  }
+
+  await userService.updateUser(user.id, { verified: true });
+
+  await tokenService.deactivateTokenById(verifiedToken.id);
+};
+
+export const requestPasswordReset = async (email: User['email']) => {
   const user = await userService.getUserByEmail(email);
 
   if (!user) {
     throw new Error("User with this email doesn't exist");
+  }
+
+  if (!user.verified) {
+    throw new Error('User is not verified');
   }
 
   await tokenService.deactivatePreviousUserTokens({
@@ -130,4 +147,30 @@ export const requestPasswordReset = async (email: string) => {
     name: user.name,
     generatedToken,
   });
+};
+
+export const resetPassword = async ({
+  newPassword,
+  token,
+}: {
+  token: Token['token'];
+  newPassword: User['password'];
+}) => {
+  const { verifiedToken, user } = await getVerifiedToken(token);
+
+  if (verifiedToken.type !== TokenType.PASSWORD_RESET) {
+    throw new Error('This token is not suitable for password reset.');
+  }
+
+  if (!user.verified) {
+    throw new Error('User is not verified.');
+  }
+
+  const hashedPassword = await hash(newPassword, 12);
+
+  await userService.updateUser(verifiedToken.userId, {
+    password: hashedPassword,
+  });
+
+  await tokenService.deactivateTokenById(verifiedToken.id);
 };

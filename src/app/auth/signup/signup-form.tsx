@@ -11,7 +11,7 @@ import { LoadingButton } from '@/components/ui/loading-button';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { toast } from 'sonner';
 
-import { resendVerificationEmail } from '@/actions/mail/controller';
+import { resendVerificationEmail } from '@/actions/auth/controller';
 
 export default function SignUpForm() {
   const { isPending, mutate } = useMutation({

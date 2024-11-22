@@ -1,6 +1,3 @@
 import { User } from '@prisma/client';
 
-export type UpdateUserDto = Omit<
-  Partial<User> & { id: User['id'] },
-  'createdAt' | 'updatedAt'
->;
+export type UpdateUserDto = Omit<Partial<User>, 'createdAt' | 'updatedAt'>;

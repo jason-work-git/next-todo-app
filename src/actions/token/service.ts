@@ -1,5 +1,5 @@
 import prisma from '@/prisma-client';
-import { TokenType } from '@prisma/client';
+import { Token, TokenType } from '@prisma/client';
 import crypto from 'crypto';
 import {
   CreateEmailVerificationTokenDto,
@@ -42,6 +42,21 @@ const createPasswordResetToken = ({
   });
 };
 
+const getTokenByToken = (token: Token['token']) => {
+  return prisma.token.findUnique({ where: { token } });
+};
+
+const deactivateTokenById = async (tokenId: Token['id']) => {
+  return prisma.token.update({
+    where: {
+      id: tokenId,
+    },
+    data: {
+      isActive: false,
+    },
+  });
+};
+
 const deactivatePreviousUserTokens = async ({
   userId,
   type,
@@ -62,5 +77,7 @@ export const tokenService = {
   createToken,
   createEmailVerificationToken,
   createPasswordResetToken,
+  getTokenByToken,
+  deactivateTokenById,
   deactivatePreviousUserTokens,
 };
