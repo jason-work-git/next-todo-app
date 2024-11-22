@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className="flex flex-col flex-grow overflow-y-auto px-8 pt-4">
           <TaskDrawerProvider>{children}</TaskDrawerProvider>
         </main>
-        <TabsList className="flex w-full justify-evenly md:hidden py-2 h-auto rounded-none">
+        <TabsList className="flex w-full justify-evenly fixed bottom-0 md:hidden py-2 h-auto rounded-none">
           {routes.map(({ children, href }) => (
             <TabsTrigger
               className="data-[state=active]:!text-primary flex flex-col gap-1 items-center text-xs"
