@@ -1,12 +1,11 @@
+import { Button } from './components';
+
 interface EmailTemplateProps {
   firstName: string;
   verificationUrl: string;
 }
 
-// tailwind doesn't work
-// TODO: style it later
-// maybe using react-email library to use tailwind and etc. but it isnt too important
-export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
+const EmailVerificationTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   firstName,
   verificationUrl,
 }) => (
@@ -23,22 +22,11 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
       Thank you for signing up. Please verify your email address by clicking the
       button below:
     </p>
-    <a
-      href={verificationUrl}
-      style={{
-        display: 'inline-block',
-        padding: '10px 20px',
-        marginTop: 10,
-        color: '#fff',
-        backgroundColor: '#007bff',
-        textDecoration: 'none',
-        borderRadius: 5,
-      }}
-    >
-      Verify Email
-    </a>
+    <Button href={verificationUrl}>Verify Email</Button>
     <p style={{ fontSize: 14, color: '#777', marginTop: 20 }}>
       If you did not sign up for this account, you can ignore this email.
     </p>
   </div>
 );
+
+export default EmailVerificationTemplate;

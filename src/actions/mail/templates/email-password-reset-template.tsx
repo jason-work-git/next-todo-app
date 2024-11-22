@@ -1,14 +1,14 @@
+import { Button } from './components';
+
 interface EmailTemplateProps {
   firstName: string;
   passwordResetUrl: string;
 }
 
-// tailwind doesn't work
-// TODO: style it later
-// maybe using react-email library to use tailwind and etc. but it isnt too important
-export const PasswordResetEmailTemplate: React.FC<
-  Readonly<EmailTemplateProps>
-> = ({ firstName, passwordResetUrl }) => (
+const PasswordResetEmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
+  firstName,
+  passwordResetUrl,
+}) => (
   <div
     style={{
       fontFamily: 'Arial, sans-serif',
@@ -26,19 +26,8 @@ export const PasswordResetEmailTemplate: React.FC<
       If you did make this request, click the button below to reset your
       password:
     </p>
-    <a
-      href={passwordResetUrl}
-      style={{
-        display: 'inline-block',
-        padding: '10px 20px',
-        marginTop: 10,
-        color: '#fff',
-        backgroundColor: '#007bff',
-        textDecoration: 'none',
-        borderRadius: 5,
-      }}
-    >
-      Reset Password
-    </a>
+    <Button href={passwordResetUrl}>Reset Password</Button>
   </div>
 );
+
+export default PasswordResetEmailTemplate;
