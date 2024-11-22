@@ -36,15 +36,11 @@ export const register = async ({
     token: generatedToken,
   });
 
-  const { error } = await mailService.sendVerificationEmail({
+  await mailService.sendVerificationEmail({
     name,
     email,
     generatedToken,
   });
-
-  if (error) {
-    throw error;
-  }
 };
 
 export const login = async ({
