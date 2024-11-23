@@ -1,3 +1,5 @@
+import { verifyUser } from '@/actions/auth/controller';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -6,30 +8,10 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
-import prisma from '@/prisma-client';
+
 import Link from 'next/link';
 
-type SearchParams = Promise<{
-  token: string | null;
-}>;
-
-const getVerifiedToken = async (token: string) => {
-  const verifiedToken = await prisma.token.findUnique({
-    where: {
-      token,
-    },
-  });
-
-  if (
-    !verifiedToken ||
-    verifiedToken.expiresAt < new Date() ||
-    !verifiedToken.isActive
-  ) {
-    throw new Error('Token is invalid or expired.');
-  }
-
-  return verifiedToken;
-};
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default async function VerificationPage({
   searchParams,
@@ -41,35 +23,7 @@ export default async function VerificationPage({
   const { token } = await searchParams;
 
   try {
-    const verifiedToken = await getVerifiedToken(token || '');
-    const user = await prisma.user.findUnique({
-      where: {
-        id: verifiedToken.userId,
-      },
-    });
-
-    if (!user) {
-      throw new Error('User not found.');
-    }
-
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        verified: true,
-      },
-    });
-
-    await prisma.token.update({
-      where: {
-        id: verifiedToken.id,
-      },
-
-      data: {
-        isActive: false,
-      },
-    });
+    await verifyUser(Array.isArray(token) || !token ? '' : token);
 
     message = 'Email verified successfully!';
     verified = true;
@@ -78,7 +32,7 @@ export default async function VerificationPage({
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center">
       <Card className="w-full max-w-md mx-4">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-bold">

@@ -15,6 +15,7 @@ const importantUsers = [
     name: 'John Doe',
     email: 'johndoe@example.com',
     password: 'password',
+    verified: true,
   },
 ];
 
