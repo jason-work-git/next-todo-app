@@ -25,7 +25,7 @@ const createEmailVerificationToken = ({
   return createToken({
     userId,
     token,
-    type: TokenType.PASSWORD_RESET,
+    type: TokenType.EMAIL_VERIFICATION,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
   });
 };

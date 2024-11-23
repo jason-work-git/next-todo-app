@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { PasswordInput } from '@/components/ui/password-input';
+import { z } from 'zod';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -34,8 +35,27 @@ export default function LoginForm() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    const email = data.get('email') as string;
-    const password = data.get('password') as string;
+
+    const parsedCredentials = z
+      .object({ email: z.string().email(), password: z.string().min(6) })
+      .safeParse({
+        email: data.get('email'),
+        password: data.get('password'),
+      });
+
+    if (parsedCredentials.error) {
+      if (parsedCredentials.error.formErrors.fieldErrors.email) {
+        toast.error(parsedCredentials.error.formErrors.fieldErrors.email);
+      }
+
+      if (parsedCredentials.error.formErrors.fieldErrors.password) {
+        toast.error(parsedCredentials.error.formErrors.fieldErrors.password);
+      }
+
+      return;
+    }
+
+    const { email, password } = parsedCredentials.data;
 
     mutate({ email, password });
   };

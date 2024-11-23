@@ -7,16 +7,31 @@ import { toast } from 'sonner';
 import { Token } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { resetPassword } from '@/actions/auth/controller';
+import { useRouter } from 'next/navigation';
 
 export default function ChangePasswordForm({
   token,
 }: {
   token: Token['token'];
 }) {
+  const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: resetPassword,
     onError: (error) => {
       toast.error(error.message);
+    },
+    onSuccess: () => {
+      toast.success('Password has been successfully reset', {
+        action: {
+          label: 'Go to signin',
+          onClick() {
+            router.push('/auth/login');
+          },
+        },
+        classNames: {
+          actionButton: 'bg-secondary',
+        },
+      });
     },
   });
 
