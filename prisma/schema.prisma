@@ -32,19 +32,6 @@ model Token {
   expiresAt DateTime
 }
 
-model TaskShareToken {
-  id       String   @id @default(uuid())
-  isActive Boolean  @default(true)
-  token    String   @unique
-  taskId   String
-  role     TaskRole
-
-  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-}
-
 model User {
   id       String  @id @default(uuid())
   verified Boolean @default(false)
@@ -62,7 +49,7 @@ model Assignment {
   taskId   String
   userId   String
   role     TaskRole
-  accepted Boolean  @default(false)
+  accepted Boolean?
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -80,8 +67,7 @@ model Task {
   description String?
   dueDate     DateTime?
 
-  assignments    Assignment[]
-  TaskShareToken TaskShareToken[]
+  assignments Assignment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
