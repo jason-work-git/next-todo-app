@@ -21,6 +21,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { getTaskById } from '@/actions/task/controller';
 import { Task } from '@prisma/client';
+import { Skeleton } from './ui/skeleton';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
@@ -84,7 +85,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
     >
       <Drawer open={open} onOpenChange={setOpen} onClose={close}>
         <DrawerContent>
-          {isLoading && <TempLayout>Loading...</TempLayout>}
+          {isLoading && <Skeleton className="w-full h-[4.625rem]" />}
           {error && <TempLayout>{error.message}</TempLayout>}
           {task && <TaskDetails task={task} />}
         </DrawerContent>
