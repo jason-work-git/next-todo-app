@@ -1,9 +1,8 @@
-import { Button } from '@/components/ui/button';
+import { LogoutButton } from '@/components/logout-button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
-import { auth, signOut } from '@/auth';
-import { LogOut } from 'lucide-react';
+import { auth } from '@/auth';
 
 export default async function Page() {
   const session = await auth();
@@ -33,19 +32,7 @@ export default async function Page() {
         </Label>
       </form>
 
-      <form
-        className="mt-auto"
-        action={async () => {
-          'use server';
-
-          await signOut();
-        }}
-      >
-        <Button className="w-full" variant={'outline'}>
-          <LogOut />
-          Logout
-        </Button>
-      </form>
+      <LogoutButton variant={'outline'} className="w-full mt-auto" />
     </div>
   );
 }
