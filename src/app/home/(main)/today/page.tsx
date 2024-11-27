@@ -3,17 +3,14 @@
 import { AddTaskButton } from '@/components/add-task-button';
 import { TaskCard } from '@/components/task-card';
 
-import { getTasks } from '@/actions/task/controller';
-import { useQuery } from '@tanstack/react-query';
 import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
+import { DetailedTask } from '@/actions/task/types';
+import useTasksQuery from '@/hooks/useTasksQuery';
 
 export default function MainPage() {
   const formattedToday = getFormattedDate(new Date());
 
-  const { data, isLoading } = useQuery({
-    queryFn: getTasks,
-    queryKey: ['tasks'],
-  });
+  const { data, isLoading } = useTasksQuery();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -23,7 +20,7 @@ export default function MainPage() {
     return <div>No tasks found</div>;
   }
 
-  const tasks = filterTodayTasks(data);
+  const tasks = filterTodayTasks(data) as DetailedTask[];
 
   return (
     <>
@@ -43,7 +40,14 @@ export default function MainPage() {
 
       <div className="flex-grow overflow-y-auto space-y-2 p-px pb-4">
         {tasks.map((task) => {
-          return <TaskCard showDueDate={false} key={task.id} task={task} />;
+          return (
+            <TaskCard
+              shared={task.assignments?.length > 1}
+              showDueDate={false}
+              key={task.id}
+              task={task}
+            />
+          );
         })}
         <AddTaskButton
           className="fixed bottom-20 right-8 "

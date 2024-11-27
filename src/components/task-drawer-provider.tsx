@@ -19,14 +19,16 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { useQuery } from '@tanstack/react-query';
-import { getTaskById } from '@/actions/task/controller';
-import { Task } from '@prisma/client';
+import { getDetailedTaskById } from '@/actions/task/controller';
+import { DetailedTask } from '@/actions/task/types';
+import { useSession } from 'next-auth/react';
+import { User } from 'next-auth';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
   setOpen: (open: boolean) => void;
   close: () => void;
-  task: Task | null;
+  task: DetailedTask | null;
 }>({
   open: false,
   setOpen: () => {},
@@ -60,12 +62,16 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
     enabled: !!taskId,
     queryFn: () => {
       if (taskId) {
-        return getTaskById(taskId);
+        return getDetailedTaskById(taskId);
       }
       return undefined;
     },
     queryKey: ['tasks', taskId],
   });
+
+  const { data: session, status } = useSession();
+
+  const loading = status === 'loading' || isLoading;
 
   useEffect(() => {
     setOpen(!!taskId);
@@ -84,9 +90,11 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
     >
       <Drawer open={open} onOpenChange={setOpen} onClose={close}>
         <DrawerContent>
-          {isLoading && <TempLayout>Loading...</TempLayout>}
+          {loading && <TempLayout>Loading...</TempLayout>}
           {error && <TempLayout>{error.message}</TempLayout>}
-          {task && <TaskDetails task={task} />}
+          {task && session?.user && (
+            <TaskDetails task={task} user={session.user as Required<User>} />
+          )}
         </DrawerContent>
       </Drawer>
       {children}
