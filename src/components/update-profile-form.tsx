@@ -8,6 +8,8 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { LoadingButton } from './ui/loading-button';
 import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
+import ResetPasswordDrawer from './reset-password-drawer';
 
 export type Props = ComponentProps<'form'> & {
   user: Pick<User, 'name' | 'email'>;
@@ -44,6 +46,15 @@ const UpdateProfileForm: React.FC<Props> = ({ user, ...rest }) => {
         Email
         <Input name="email" value={user.email} disabled />
       </Label>
+
+      <ResetPasswordDrawer
+        userEmail={user.email}
+        trigger={
+          <Button type="button" variant="outline">
+            Reset password
+          </Button>
+        }
+      />
 
       <LoadingButton className="items-end" type="submit" isLoading={isPending}>
         Save
