@@ -22,7 +22,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getDetailedTaskById } from '@/actions/task/controller';
 import { DetailedTask } from '@/actions/task/types';
 
-import { getCurrentUser } from '@/actions/auth/controller';
+import useUserQuery from '@/hooks/use-user-query';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
@@ -50,10 +50,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const { data: user, isLoading: isUserLoading } = useQuery({
-    queryFn: getCurrentUser,
-    queryKey: ['user'],
-  });
+  const { data: user, isLoading: isUserLoading } = useUserQuery();
 
   console.log(user);
 
