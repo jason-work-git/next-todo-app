@@ -1,8 +1,6 @@
 'use client';
 
-import { Plus } from 'lucide-react';
-
-import { Button, ButtonProps } from './ui/button';
+import { Button } from './ui/button';
 import {
   Drawer,
   DrawerClose,
@@ -10,6 +8,7 @@ import {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
+  DrawerProps,
   DrawerTitle,
   DrawerTrigger,
 } from './ui/drawer';
@@ -21,14 +20,16 @@ import { DateSelect } from './date-select';
 
 import useAddTaskMutation from '@/hooks/useAddTaskMutation';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 
-export const AddTaskButton = ({
+export const AddTaskFlow = ({
   defaultDueDate = null,
-  className,
+  trigger,
+  onAdd,
   ...props
-}: Omit<ButtonProps, 'children' | 'asChild'> & {
+}: Omit<DrawerProps, 'open' | 'onOpenChange' | 'children' | 'fadeFromIndex'> & {
+  trigger: React.ReactNode;
   defaultDueDate?: Date | null;
+  onAdd?: () => void;
 }) => {
   const [isOpened, setIsOpened] = useState(false);
 
@@ -50,6 +51,7 @@ export const AddTaskButton = ({
       setFormData(defaultValues);
       setIsOpened(false);
     },
+    onSettled: onAdd,
   });
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -62,15 +64,9 @@ export const AddTaskButton = ({
   };
 
   return (
-    <Drawer open={isOpened} onOpenChange={setIsOpened}>
+    <Drawer open={isOpened} onOpenChange={setIsOpened} {...props}>
       <DrawerTrigger asChild>
-        <Button
-          {...props}
-          size={'icon'}
-          className={cn('gap-1 size-12 rounded-lg', className)}
-        >
-          <Plus className="!size-7" />
-        </Button>
+        {trigger === undefined ? <Button>Add task</Button> : trigger}
       </DrawerTrigger>
       <DrawerContent>
         <form onSubmit={onSubmit}>

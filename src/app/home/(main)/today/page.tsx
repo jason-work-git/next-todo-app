@@ -1,11 +1,13 @@
 'use client';
 
-import { AddTaskButton } from '@/components/add-task-button';
+import { AddTaskFlow } from '@/components/add-task-flow';
 import { TaskCard } from '@/components/task-card';
 
 import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
 import { DetailedTask } from '@/actions/task/types';
 import useTasksQuery from '@/hooks/useTasksQuery';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 
 export default function MainPage() {
   const formattedToday = getFormattedDate(new Date());
@@ -49,8 +51,15 @@ export default function MainPage() {
             />
           );
         })}
-        <AddTaskButton
-          className="fixed bottom-20 right-8 "
+        <AddTaskFlow
+          trigger={
+            <Button
+              size={'icon'}
+              className="fixed bottom-20 right-8 gap-1 size-12 rounded-lg"
+            >
+              <Plus className="!size-7" />
+            </Button>
+          }
           defaultDueDate={new Date()}
         />
       </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { DetailedTask } from '@/actions/task/types';
-import { AddTaskButton } from '@/components/add-task-button';
+import { AddTaskFlow } from '@/components/add-task-flow';
 import { TaskCard } from '@/components/task-card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -27,7 +27,7 @@ import {
   getSortedTasks,
 } from '@/lib/utils';
 
-import { ArrowDownUp, FilterIcon } from 'lucide-react';
+import { ArrowDownUp, FilterIcon, Plus } from 'lucide-react';
 import { useState } from 'react';
 
 const SortSelect = ({
@@ -120,8 +120,15 @@ export default function AllPage() {
           />
         ))}
 
-        <AddTaskButton
-          className="fixed bottom-20 right-8"
+        <AddTaskFlow
+          trigger={
+            <Button
+              size={'icon'}
+              className="fixed bottom-20 right-8 gap-1 size-12 rounded-lg"
+            >
+              <Plus className="!size-7" />
+            </Button>
+          }
           defaultDueDate={new Date()}
         />
       </div>
