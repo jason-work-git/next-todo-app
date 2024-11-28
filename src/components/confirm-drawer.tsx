@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+
 import {
   Drawer,
   DrawerClose,
@@ -12,7 +12,10 @@ import {
 import { Button } from './ui/button';
 import { LoadingButton } from './ui/loading-button';
 
-export type ConfirmDrawerProps = Pick<DrawerProps, 'open' | 'onOpenChange'> & {
+export type ConfirmDrawerProps = Omit<
+  DrawerProps,
+  'children' | 'fadeFromIndex'
+> & {
   title: React.ReactNode;
   trigger: React.ReactNode;
   description?: React.ReactNode;
@@ -38,7 +41,7 @@ const ConfirmDrawer: React.FC<ConfirmDrawerProps> = ({
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
 
       <DrawerContent className="flex gap-4 px-5 pb-2">
-        <DrawerTitle className="">{title}</DrawerTitle>
+        <DrawerTitle>{title}</DrawerTitle>
         <DrawerDescription>{description}</DrawerDescription>
 
         <div className="flex gap-4">
