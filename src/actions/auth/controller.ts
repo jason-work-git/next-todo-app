@@ -2,13 +2,25 @@
 
 import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { Token, TokenType, User } from '@prisma/client';
 import { userService } from '@/actions/user/service';
 import { mailService } from '@/actions/mail/service';
 import { tokenService } from '@/actions/token/service';
 import { getVerifiedToken } from '../token/controller';
+import { requireAuth } from './middlewares';
+
+export const getCurrentUser = requireAuth(async ({ session }) => {
+  const user = await userService.getUserById(session.user.id);
+
+  if (!user) {
+    await signOut();
+    throw new Error('User not found.');
+  }
+
+  return userService.normalizeUser(user);
+});
 
 export const register = async ({
   name,

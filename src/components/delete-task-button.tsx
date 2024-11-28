@@ -14,6 +14,7 @@ import { Task } from '@prisma/client';
 
 import useDeleteTaskMutation from '@/hooks/useDeleteTaskMutation';
 import { useState } from 'react';
+import ConfirmDrawer from './confirm-drawer';
 
 export const DeleteTaskButton = ({
   taskId,
@@ -34,6 +35,18 @@ export const DeleteTaskButton = ({
       }
     },
   });
+
+  return (
+    <ConfirmDrawer
+      open={open}
+      onOpenChange={setOpen}
+      trigger={<Button {...props}>Delete</Button>}
+      title="Are you sure?"
+      description="This action cannot be undone. This will permanently delete your task."
+      confirmText="Yes, delete it"
+      onConfirm={() => mutate({ id: taskId })}
+    />
+  );
 
   return (
     <Drawer open={open} onOpenChange={setOpen} nested>

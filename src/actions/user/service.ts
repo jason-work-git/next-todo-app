@@ -23,9 +23,15 @@ function updateUser(userId: User['id'], data: UpdateUserDto) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function normalizeUser({ password, ...user }: User) {
+  return user;
+}
+
 export const userService = {
   getUserByEmail,
   getUserById,
   createUser,
   updateUser,
+  normalizeUser,
 };

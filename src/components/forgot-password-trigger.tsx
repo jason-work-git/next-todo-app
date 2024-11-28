@@ -21,32 +21,20 @@ import {
 import { DialogTriggerProps } from '@radix-ui/react-dialog';
 import { Input } from '@/components/ui/input';
 import { LoadingButton } from '@/components/ui/loading-button';
-
-import { useMutation } from '@tanstack/react-query';
-import { requestPasswordReset } from '@/actions/auth/controller';
-import { toast } from 'sonner';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useRequestPasswordReset } from '@/hooks/useRequestPasswordReset';
 
 export default function ForgotPasswordTrigger({
   ...props
 }: DialogTriggerProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: requestPasswordReset,
-    onSuccess: () => {
-      toast.success('Password reset link was sent to your email');
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { requestPasswordReset, isPending } = useRequestPasswordReset();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
-    mutate(email);
+    requestPasswordReset(email);
   };
 
   const title = 'Forgot password? Donut worry 🍩';
