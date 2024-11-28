@@ -9,21 +9,20 @@ import {
 
 import { DeleteTaskButton } from './delete-task-button';
 
-import { TaskRole } from '@prisma/client';
+import { TaskRole, User } from '@prisma/client';
 import { useTaskDrawerData } from './task-drawer-provider';
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 import { EditFormData, EditTaskForm } from './edit-task-form';
 import { ShareTaskButton } from './share-task-button';
 import { DetailedTask } from '@/actions/task/types';
 import { InfoIcon } from 'lucide-react';
-import { NormalizedUser } from '@/actions/user/controller';
 
 export const TaskDetails = ({
   task,
-  user,
+  userId,
 }: {
   task: DetailedTask;
-  user: NormalizedUser;
+  userId: User['id'];
 }) => {
   const { close } = useTaskDrawerData();
   const { mutate } = useUpdateTaskMutation({
@@ -32,7 +31,7 @@ export const TaskDetails = ({
 
   const isShared = task.assignments.length > 1;
   const owner = task.assignments.find((a) => a.role === TaskRole.OWNER)?.user;
-  const role = task.assignments.find((a) => a.userId === user.id)
+  const role = task.assignments.find((a) => a.userId === userId)
     ?.role as TaskRole;
 
   const handleSubmit = (formData: EditFormData) => {
@@ -56,7 +55,7 @@ export const TaskDetails = ({
           {isShared && (
             <div className="px-4 flex flex-col gap-2">
               <div className="flex gap-2">
-                <InfoIcon className="text-blue-500" />
+                <InfoIcon className="text-blue-500 flex-shrink-0" />
                 <span>This task has been shared to: </span>
               </div>
               <ul className="list-disc pl-8">
@@ -64,7 +63,13 @@ export const TaskDetails = ({
                   .filter((a) => a.role !== TaskRole.OWNER)
                   .map((a) => (
                     <li key={a.id}>
-                      {a.user.name} ({a.user.email})
+                      {a.user.name} ({a.user.email}) (
+                      {a.accepted === null
+                        ? 'pending'
+                        : a.accepted
+                          ? 'accepted'
+                          : 'declined'}
+                      )
                     </li>
                   ))}
               </ul>
@@ -90,7 +95,7 @@ export const TaskDetails = ({
       <DrawerFooter>
         {isShared && owner && role !== TaskRole.OWNER && (
           <div className="px-4 flex gap-2">
-            <InfoIcon className="text-blue-500" />
+            <InfoIcon className="text-blue-500 flex-shrink-0" />
             <div>
               <span>
                 This task has been shared by: {owner.name} ({owner.email})

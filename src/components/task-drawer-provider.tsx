@@ -97,7 +97,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
         <DrawerContent>
           {loading && <TempLayout>Loading...</TempLayout>}
           {error && <TempLayout>{error.message}</TempLayout>}
-          {task && user && <TaskDetails task={task} user={user} />}
+          {task && user && <TaskDetails task={task} userId={user.id} />}
         </DrawerContent>
       </Drawer>
       {children}
