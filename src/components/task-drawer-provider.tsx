@@ -21,8 +21,8 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { getDetailedTaskById } from '@/actions/task/controller';
 import { DetailedTask } from '@/actions/task/types';
-import { useSession } from 'next-auth/react';
-import { User } from 'next-auth';
+
+import { getCurrentUser } from '@/actions/auth/controller';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
@@ -50,13 +50,20 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const { data: user, isLoading: isUserLoading } = useQuery({
+    queryFn: getCurrentUser,
+    queryKey: ['user'],
+  });
+
+  console.log(user);
+
   const taskId = searchParams.get('taskId');
 
   const [open, setOpen] = useState(!!taskId);
 
   const {
     data: task,
-    isLoading,
+    isLoading: isTaskLoading,
     error,
   } = useQuery({
     enabled: !!taskId,
@@ -69,9 +76,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
     queryKey: ['tasks', taskId],
   });
 
-  const { data: session, status } = useSession();
-
-  const loading = status === 'loading' || isLoading;
+  const loading = isTaskLoading || isUserLoading;
 
   useEffect(() => {
     setOpen(!!taskId);
@@ -92,9 +97,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
         <DrawerContent>
           {loading && <TempLayout>Loading...</TempLayout>}
           {error && <TempLayout>{error.message}</TempLayout>}
-          {task && session?.user && (
-            <TaskDetails task={task} user={session.user as Required<User>} />
-          )}
+          {task && user && <TaskDetails task={task} user={user} />}
         </DrawerContent>
       </Drawer>
       {children}

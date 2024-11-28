@@ -16,14 +16,14 @@ import { EditFormData, EditTaskForm } from './edit-task-form';
 import { ShareTaskButton } from './share-task-button';
 import { DetailedTask } from '@/actions/task/types';
 import { InfoIcon } from 'lucide-react';
-import { User } from 'next-auth';
+import { NormalizedUser } from '@/actions/user/controller';
 
 export const TaskDetails = ({
   task,
   user,
 }: {
   task: DetailedTask;
-  user: Required<User>;
+  user: NormalizedUser;
 }) => {
   const { close } = useTaskDrawerData();
   const { mutate } = useUpdateTaskMutation({
