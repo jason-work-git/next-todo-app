@@ -32,7 +32,7 @@ export default function TabsLayout({
         <TabsList className="flex w-full justify-evenly fixed bottom-0 md:hidden py-2 h-[4.25rem] rounded-none">
           {routes.map(({ icon: Icon, title, href }) => (
             <TabsTrigger
-              className="data-[state=active]:!text-primary flex flex-col gap-1 items-center text-xs"
+              className="data-[state=active]:!text-primary min-w-[4.625rem] flex flex-col gap-1 items-center text-xs"
               key={href}
               value={href}
               asChild
