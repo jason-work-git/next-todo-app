@@ -29,10 +29,13 @@ export const TaskDetails = ({
     onMutate: () => close(),
   });
 
-  const isShared = task.assignments.length > 1;
-  const owner = task.assignments.find((a) => a.role === TaskRole.OWNER)?.user;
-  const role = task.assignments.find((a) => a.userId === userId)
-    ?.role as TaskRole;
+  const isShared = task.assignments ? task.assignments.length > 1 : false;
+  const owner =
+    task.assignments &&
+    task.assignments.find((a) => a.role === TaskRole.OWNER)?.user;
+  const role =
+    task.assignments &&
+    (task.assignments.find((a) => a.userId === userId)?.role as TaskRole);
 
   const handleSubmit = (formData: EditFormData) => {
     mutate({
