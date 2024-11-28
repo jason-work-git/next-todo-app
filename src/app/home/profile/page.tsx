@@ -1,7 +1,4 @@
-import { Button } from '@/components/ui/button';
-
-import { signOut } from '@/auth';
-import { LogOut } from 'lucide-react';
+import { LogoutButton } from '@/components/logout-button';
 import UpdateProfileForm from '@/components/update-profile-form';
 import { getCurrentUser } from '@/actions/auth/controller';
 
@@ -19,19 +16,7 @@ export default async function ProfilePage() {
 
       <UpdateProfileForm user={user} />
 
-      <form
-        className="mt-auto"
-        action={async () => {
-          'use server';
-
-          await signOut();
-        }}
-      >
-        <Button className="w-full" variant={'outline'}>
-          <LogOut />
-          Logout
-        </Button>
-      </form>
+      <LogoutButton variant={'outline'} className="w-full mt-auto" />
     </div>
   );
 }

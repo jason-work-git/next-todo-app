@@ -19,14 +19,16 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { useQuery } from '@tanstack/react-query';
-import { getTaskById } from '@/actions/task/controller';
-import { Task } from '@prisma/client';
+import { getDetailedTaskById } from '@/actions/task/controller';
+import { DetailedTask } from '@/actions/task/types';
+
+import { getCurrentUser } from '@/actions/auth/controller';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
   setOpen: (open: boolean) => void;
   close: () => void;
-  task: Task | null;
+  task: DetailedTask | null;
 }>({
   open: false,
   setOpen: () => {},
@@ -48,24 +50,33 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const { data: user, isLoading: isUserLoading } = useQuery({
+    queryFn: getCurrentUser,
+    queryKey: ['user'],
+  });
+
+  console.log(user);
+
   const taskId = searchParams.get('taskId');
 
   const [open, setOpen] = useState(!!taskId);
 
   const {
     data: task,
-    isLoading,
+    isLoading: isTaskLoading,
     error,
   } = useQuery({
     enabled: !!taskId,
     queryFn: () => {
       if (taskId) {
-        return getTaskById(taskId);
+        return getDetailedTaskById(taskId);
       }
       return undefined;
     },
     queryKey: ['tasks', taskId],
   });
+
+  const loading = isTaskLoading || isUserLoading;
 
   useEffect(() => {
     setOpen(!!taskId);
@@ -84,9 +95,9 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
     >
       <Drawer open={open} onOpenChange={setOpen} onClose={close}>
         <DrawerContent>
-          {isLoading && <TempLayout>Loading...</TempLayout>}
+          {loading && <TempLayout>Loading...</TempLayout>}
           {error && <TempLayout>{error.message}</TempLayout>}
-          {task && <TaskDetails task={task} />}
+          {task && user && <TaskDetails task={task} userId={user.id} />}
         </DrawerContent>
       </Drawer>
       {children}

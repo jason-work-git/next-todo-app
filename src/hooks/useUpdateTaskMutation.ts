@@ -23,13 +23,17 @@ type UseUpdateTaskMutationOptions = Omit<
 export default function useUpdateTaskMutation({
   onMutate,
   onError,
+  onSettled,
   ...options
 }: UseUpdateTaskMutationOptions = {}) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Task, Error, UpdateTaskDto, TContext>({
     mutationFn: updateTask,
-    onMutate: (newTask) => {
+    onMutate: async (newTask) => {
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: ['tasks', newTask.id] });
+
       const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
       const previousTask = queryClient.getQueryData<Task>([
         'tasks',
@@ -76,6 +80,14 @@ export default function useUpdateTaskMutation({
 
       if (onError) {
         onError(error, variables, context);
+      }
+    },
+    onSettled: (data, error, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', variables.id] });
+
+      if (onSettled) {
+        onSettled(data, error, variables, context);
       }
     },
     ...options,

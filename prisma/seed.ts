@@ -60,7 +60,7 @@ const createNewData = async () => {
 
     const taskRoles = Object.values(TaskRole);
 
-    const assignments: Assignment[] = tasks.map((task) => {
+    const assignments: Omit<Assignment, 'id'>[] = tasks.map((task) => {
       return {
         role: taskRoles[Math.floor(Math.random() * taskRoles.length)],
         taskId: task.id,

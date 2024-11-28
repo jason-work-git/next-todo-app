@@ -9,16 +9,19 @@ import { cn, formatDate } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
+import { UsersIcon } from 'lucide-react';
 
 export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
   task: Task;
   showDueDate?: boolean;
+  shared?: boolean;
   ref?: React.Ref<HTMLDivElement>;
 };
 
 export const TaskCard = ({
   task: { id, title, description, completed, dueDate },
   showDueDate = true,
+  shared,
   ref,
   className,
   ...props
@@ -41,6 +44,7 @@ export const TaskCard = ({
       onClick();
     }
   };
+
   return (
     <Card
       role="button"
@@ -73,10 +77,13 @@ export const TaskCard = ({
           >
             {title}
           </CardTitle>
+          {shared && (
+            <UsersIcon className="text-muted-foreground size-5 flex-shrink-0 ml-auto" />
+          )}
         </div>
 
         {description && (
-          <span className="pl-7 !mt-0 text-muted-foreground text-sm text-nowrap overflow-hidden text-ellipsis">
+          <span className="pl-7 !mt-0 text-muted-foreground text-sm truncate">
             {description}
           </span>
         )}

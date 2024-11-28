@@ -19,19 +19,6 @@ enum TokenType {
   PASSWORD_RESET
 }
 
-model User {
-  id       String  @id @default(uuid())
-  verified Boolean @default(false)
-  email    String  @unique
-  name     String?
-  password String
-
-  tokens      Token[]
-  assignments Assignment[]
-  updatedAt   DateTime     @updatedAt
-  createdAt   DateTime     @default(now())
-}
-
 model Token {
   id       String    @id @default(uuid())
   isActive Boolean   @default(true)
@@ -45,11 +32,26 @@ model Token {
   expiresAt DateTime
 }
 
+model User {
+  id       String  @id @default(uuid())
+  verified Boolean @default(false)
+  email    String  @unique
+  name     String
+  password String
+
+  tokens      Token[]
+  assignments Assignment[]
+  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime     @default(now())
+}
+
 model Assignment {
+  // TODO: Add owner id
+  id       String   @id @default(uuid())
   taskId   String
   userId   String
   role     TaskRole
-  accepted Boolean  @default(false)
+  accepted Boolean?
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -68,6 +70,7 @@ model Task {
   dueDate     DateTime?
 
   assignments Assignment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
