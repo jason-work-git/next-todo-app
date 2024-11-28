@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from './ui/button';
+import { LoadingButton } from './ui/loading-button';
 import {
   Drawer,
   DrawerClose,
@@ -8,115 +9,103 @@ import {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerProps,
   DrawerTitle,
   DrawerTrigger,
 } from './ui/drawer';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { LoadingButton } from './ui/loading-button';
-import { DateSelect } from './date-select';
-
-import useAddTaskMutation from '@/hooks/useAddTaskMutation';
 import { useState } from 'react';
+import {
+  DialogClose,
+  DialogProps,
+  DialogTrigger,
+} from '@radix-ui/react-dialog';
+import { AddTaskForm } from './add-task-form';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
 
-export const AddTaskFlow = ({
-  defaultDueDate = null,
-  trigger,
-  onAdd,
-  ...props
-}: Omit<DrawerProps, 'open' | 'onOpenChange' | 'children' | 'fadeFromIndex'> & {
+type Props = Omit<DialogProps, 'children' | 'open' | 'onOpenChange'> & {
   trigger: React.ReactNode;
   defaultDueDate?: Date | null;
   onAdd?: () => void;
-}) => {
+};
+
+export const AddTaskFlow = ({
+  trigger: propsTrigger,
+  defaultDueDate = null,
+  onAdd,
+  ...props
+}: Props) => {
   const [isOpened, setIsOpened] = useState(false);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  const defaultValues = {
-    title: '',
-    description: '',
-    dueDate: defaultDueDate,
-  };
+  const trigger = propsTrigger ?? <Button>Add task</Button>;
 
-  // TODO: add hookform later maybe
-  const [formData, setFormData] = useState<{
-    title: string;
-    description: string;
-    dueDate: Date | null;
-  }>(defaultValues);
+  const title = 'Add new task';
 
-  const { mutate } = useAddTaskMutation({
-    onMutate: () => {
-      setFormData(defaultValues);
-      setIsOpened(false);
-    },
-    onSettled: onAdd,
-  });
+  const description = 'Add a new task to your list';
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    mutate({
-      title: formData.title,
-      description: formData.description || null,
-      dueDate: formData.dueDate,
-    });
-  };
+  if (isDesktop) {
+    return (
+      <Dialog>
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+
+          <AddTaskForm
+            defaultValues={{
+              title: '',
+              description: '',
+              dueDate: defaultDueDate,
+            }}
+            onSettled={onAdd}
+          >
+            <DialogFooter>
+              <LoadingButton type="submit">Add</LoadingButton>
+              <DialogClose asChild>
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </AddTaskForm>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Drawer open={isOpened} onOpenChange={setIsOpened} {...props}>
-      <DrawerTrigger asChild>
-        {trigger === undefined ? <Button>Add task</Button> : trigger}
-      </DrawerTrigger>
+      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent>
-        <form onSubmit={onSubmit}>
-          <DrawerHeader>
-            <DrawerTitle>Add new task</DrawerTitle>
-            <DrawerDescription>Add a new task to your list.</DrawerDescription>
-          </DrawerHeader>
+        <DrawerHeader>
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{description}</DrawerDescription>
+        </DrawerHeader>
 
-          <div className="px-4 pb-4 flex flex-col gap-2">
-            <Label className="flex flex-col gap-2">
-              Title
-              <Input
-                required
-                name="title"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                placeholder="Some important task"
-              />
-            </Label>
-            <Label className="flex flex-col gap-2">
-              Description
-              <Textarea
-                name="description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Some important description"
-              />
-            </Label>
-            <div className="flex flex-col gap-2 items-start">
-              <span className="text-sm font-medium leading-none">Due date</span>
-              <DateSelect
-                selectedDate={formData.dueDate}
-                onSelectDate={(value) =>
-                  setFormData({ ...formData, dueDate: value })
-                }
-              />
-            </div>
-          </div>
+        <AddTaskForm
+          className="px-4"
+          defaultValues={{
+            title: '',
+            description: '',
+            dueDate: defaultDueDate,
+          }}
+          onSettled={onAdd}
+        />
 
-          <DrawerFooter>
-            <LoadingButton type="submit">Add</LoadingButton>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </form>
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button variant="outline">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
