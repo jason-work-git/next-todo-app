@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import LoginForm from './login-form';
 import AuthProviders from '@/components/auth-providers';
-import ForgotPasswordTrigger from '@/components/forgot-password-trigger';
+import ForgotPasswordFlow from '@/components/forgot-password-flow';
 
 export default function LoginPage() {
   return (
@@ -10,11 +10,13 @@ export default function LoginPage() {
         Sign in
       </h1>
       <LoginForm />
-      <ForgotPasswordTrigger asChild>
-        <span className="cursor-pointer underline-offset-4 hover:underline text-xs self-end text-muted-foreground">
-          Forgot password?
-        </span>
-      </ForgotPasswordTrigger>
+      <ForgotPasswordFlow
+        trigger={
+          <span className="cursor-pointer underline-offset-4 hover:underline text-xs self-end text-muted-foreground">
+            Forgot password?
+          </span>
+        }
+      />
       <AuthProviders />
 
       <span className="text-xs self-center text-muted-foreground">
