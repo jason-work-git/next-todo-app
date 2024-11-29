@@ -84,13 +84,19 @@ model Assignment {
   @@unique([taskId, userId])
 }
 
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model Task {
-  id          String    @id @default(uuid())
-  completed   Boolean   @default(false)
+  id          String        @id @default(uuid())
+  completed   Boolean       @default(false)
   title       String
   description String?
   dueDate     DateTime?
-  // TODO: add: priority Int @default(0)
+  priority    TaskPriority?
 
   assignments Assignment[]
 

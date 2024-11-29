@@ -82,7 +82,7 @@ export default function useAddTaskMutation({
   });
 
   const mutate = (
-    data: Pick<AddTaskDto, 'title' | 'description' | 'dueDate'>,
+    data: Pick<AddTaskDto, 'title' | 'description' | 'dueDate' | 'priority'>,
   ) => {
     const createdAt = new Date();
 
