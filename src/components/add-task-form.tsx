@@ -6,11 +6,20 @@ import { DateSelect } from './date-select';
 import useAddTaskMutation from '@/hooks/useAddTaskMutation';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
+import { TaskPriority } from '@prisma/client';
 
 type FormData = {
   title: string;
   description: string;
   dueDate: Date | null;
+  priority: TaskPriority | null;
 };
 
 type Props = React.HTMLAttributes<HTMLFormElement> & {
@@ -45,6 +54,7 @@ export const AddTaskForm = ({
     e.preventDefault();
     mutate({
       ...formData,
+      priority: formData.priority || null,
       description: formData.description || null,
     });
   };
@@ -88,6 +98,31 @@ export const AddTaskForm = ({
             }
           />
         </div>
+        <Label className="flex flex-col gap-2">
+          Task priority
+          <Select
+            value={formData.priority || ''}
+            onValueChange={(value) =>
+              setFormData({
+                ...formData,
+                priority: value !== 'null' ? (value as TaskPriority) : null,
+              })
+            }
+            name="priority"
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select priority" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(TaskPriority).map((priority) => (
+                <SelectItem key={priority} value={priority}>
+                  {priority}
+                </SelectItem>
+              ))}
+              <SelectItem value="null">No priority</SelectItem>
+            </SelectContent>
+          </Select>
+        </Label>
       </div>
       {children}
     </form>

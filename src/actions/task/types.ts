@@ -5,7 +5,10 @@ export type DetailedTask = NonNullable<
   Awaited<ReturnType<typeof taskService.getDetailedUserTaskById>>
 >;
 
-export type AddTaskDto = Pick<Task, 'title' | 'description' | 'dueDate'> &
+export type AddTaskDto = Pick<
+  Task,
+  'title' | 'description' | 'dueDate' | 'priority'
+> &
   Partial<Pick<Task, 'id' | 'completed' | 'createdAt' | 'updatedAt'>>;
 
 export type UpdateTaskDto = Omit<
