@@ -16,15 +16,7 @@ export default function MainPage() {
 
   const { data, isLoading } = useTasksQuery();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!data) {
-    return <div>No tasks found</div>;
-  }
-
-  const tasks = filterTodayTasks(data) as DetailedTask[];
+  const tasks = filterTodayTasks(data || []) as DetailedTask[];
 
   return (
     <>
@@ -35,13 +27,7 @@ export default function MainPage() {
         {formattedToday}
       </h2>
 
-      {isLoading && (
-        <>
-          <Skeleton className="w-full h-[2.5rem] mb-5" />
-        </>
-      )}
-
-      {isLoading && tasks.length === 0 && (
+      {!isLoading && tasks.length === 0 && (
         <>
           <div className="text-center font-medium flex justify-center items-center h-full">
             Nothing on your plate today, enjoy your free time! 🎉
@@ -50,6 +36,13 @@ export default function MainPage() {
       )}
 
       <div className="flex-grow overflow-y-auto space-y-2 p-px pb-4">
+        {isLoading && (
+          <>
+            <Skeleton className="w-full h-[4.625rem]" />
+            <Skeleton className="w-full h-[4.625rem]" />
+            <Skeleton className="w-full h-[4.625rem]" />
+          </>
+        )}
         {tasks.map((task) => {
           return (
             <TaskCard
