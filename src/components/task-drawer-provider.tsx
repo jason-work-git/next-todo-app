@@ -109,7 +109,12 @@ const TaskFlowSkeleton = () => {
         </DialogHeader>
         <EditTaskForm
           onSubmit={() => {}}
-          initialState={{ description: '', title: '', dueDate: null }}
+          initialState={{
+            description: '',
+            title: '',
+            dueDate: null,
+            priority: null,
+          }}
           disabled={true}
         />
       </>
@@ -125,7 +130,12 @@ const TaskFlowSkeleton = () => {
       <EditTaskForm
         className="px-4 pb-4 animate-pulse"
         onSubmit={() => {}}
-        initialState={{ description: '', title: '', dueDate: null }}
+        initialState={{
+          description: '',
+          title: '',
+          dueDate: null,
+          priority: null,
+        }}
         disabled={true}
       />
     </>

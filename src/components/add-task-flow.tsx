@@ -65,6 +65,7 @@ export const AddTaskFlow = ({
               title: '',
               description: '',
               dueDate: defaultDueDate,
+              priority: null,
             }}
             onSettled={onAdd}
             onMutate={() => setIsOpened(false)}
@@ -98,6 +99,7 @@ export const AddTaskFlow = ({
             title: '',
             description: '',
             dueDate: defaultDueDate,
+            priority: null,
           }}
           onSettled={onAdd}
           onMutate={() => setIsOpened(false)}
