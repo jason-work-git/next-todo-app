@@ -30,7 +30,7 @@ import {
 } from './ui/dialog';
 
 type Props = Omit<DialogProps, 'children' | 'open' | 'onOpenChange'> & {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
   defaultDueDate?: Date | null;
   onAdd?: () => void;
 };

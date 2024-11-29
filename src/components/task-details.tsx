@@ -13,9 +13,10 @@ import { TaskRole, User } from '@prisma/client';
 import { useTaskDrawerData } from './task-drawer-provider';
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
 import { EditFormData, EditTaskForm } from './edit-task-form';
-import { ShareTaskButton } from './share-task-button';
+import { ShareTaskFlow } from './share-task-flow';
 import { DetailedTask } from '@/actions/task/types';
-import { InfoIcon } from 'lucide-react';
+import { InfoIcon, Share } from 'lucide-react';
+import { Button } from './ui/button';
 
 export const TaskDetails = ({
   task,
@@ -79,7 +80,14 @@ export const TaskDetails = ({
             </div>
           )}
           <div className="flex justify-end px-4 mb-2">
-            <ShareTaskButton variant={'ghost'} taskId={task.id} />
+            <ShareTaskFlow
+              taskId={task.id}
+              trigger={
+                <Button variant={'ghost'}>
+                  <Share /> Share
+                </Button>
+              }
+            />
           </div>
         </>
       )}

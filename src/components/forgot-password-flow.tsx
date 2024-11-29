@@ -26,7 +26,7 @@ import { useRequestPasswordReset } from '@/hooks/useRequestPasswordReset';
 import { Button } from './ui/button';
 
 type Props = Omit<DialogProps, 'children'> & {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
 };
 
 export default function ForgotPasswordFlow({
