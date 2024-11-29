@@ -84,6 +84,7 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
 
     onSettled: (data, error, variables, context) => {
       queryClient.invalidateQueries({ queryKey: ['assignments'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
 
       if (onSettled) {
         onSettled(data, error, variables, context);

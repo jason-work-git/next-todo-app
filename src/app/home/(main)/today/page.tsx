@@ -1,5 +1,7 @@
 'use client';
 
+import { Skeleton } from '@/components/ui/skeleton';
+
 import { AddTaskFlow } from '@/components/add-task-flow';
 import { TaskCard } from '@/components/task-card';
 
@@ -14,33 +16,33 @@ export default function MainPage() {
 
   const { data, isLoading } = useTasksQuery();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!data) {
-    return <div>No tasks found</div>;
-  }
-
-  const tasks = filterTodayTasks(data) as DetailedTask[];
+  const tasks = filterTodayTasks(data || []) as DetailedTask[];
 
   return (
     <>
       <header className="mb-4">
         <h1 className="text-xl font-semibold text-center">Today</h1>
       </header>
-
       <h2 className="font-medium text-muted-foreground mb-2">
         {formattedToday}
       </h2>
 
-      {tasks.length === 0 && (
-        <div className="text-center font-medium flex justify-center items-center h-full">
-          Nothing on your plate today, enjoy your free time! 🎉
-        </div>
+      {!isLoading && tasks.length === 0 && (
+        <>
+          <div className="text-center font-medium flex justify-center items-center h-full">
+            Nothing on your plate today, enjoy your free time! 🎉
+          </div>
+        </>
       )}
 
       <div className="flex-grow overflow-y-auto space-y-2 p-px pb-4">
+        {isLoading && (
+          <>
+            <Skeleton className="w-full h-[4.625rem]" />
+            <Skeleton className="w-full h-[4.625rem]" />
+            <Skeleton className="w-full h-[4.625rem]" />
+          </>
+        )}
         {tasks.map((task) => {
           return (
             <TaskCard

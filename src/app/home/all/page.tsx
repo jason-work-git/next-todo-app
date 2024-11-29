@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import useTasksQuery from '@/hooks/useTasksQuery';
 import {
   SortOptions,
@@ -110,7 +111,13 @@ export default function AllPage() {
       )}
 
       <div className="flex-grow overflow-y-auto space-y-2 p-px pb-4">
-        {isLoading && <div>Loading...</div>}
+        {isLoading && (
+          <>
+            <Skeleton className="w-full h-[4.625rem]" />
+            <Skeleton className="w-full h-[4.625rem]" />
+            <Skeleton className="w-full h-[4.625rem]" />
+          </>
+        )}
 
         {tasks.map((task) => (
           <TaskCard

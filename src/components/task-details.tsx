@@ -144,8 +144,8 @@ export const TaskDetails = ({
   return (
     <>
       <DrawerHeader>
-        <DrawerTitle>Edit task</DrawerTitle>
-        <DrawerDescription>Provide new task details</DrawerDescription>
+        <DrawerTitle>{title}</DrawerTitle>
+        <DrawerDescription>{description}</DrawerDescription>
       </DrawerHeader>
 
       {sharedToInfo}
