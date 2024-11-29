@@ -7,6 +7,7 @@ import { getDetailedNonOwnerAssignments } from '@/actions/assignment/controller'
 import { useQuery } from '@tanstack/react-query';
 import useUpdateAssignmentAcceptedStatusMutation from '@/hooks/useUpdateAssignmentAcceptedStatusMutation';
 import { DetailedAssignment } from '@/actions/assignment/service';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AssignmentsList = ({
   assignments,
@@ -43,11 +44,7 @@ const AssignmentsList = ({
 };
 
 export default function InboxPage() {
-  const {
-    data: assignments,
-    isLoading,
-    error,
-  } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryFn: getDetailedNonOwnerAssignments,
     queryKey: ['assignments'],
   });
@@ -58,16 +55,10 @@ export default function InboxPage() {
     },
   });
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const assignments = data || [];
 
   if (error) {
     return <div>Error: {error.message}</div>;
-  }
-
-  if (!assignments) {
-    return <div>No assignments</div>;
   }
 
   const newAssignments = assignments
@@ -86,11 +77,19 @@ export default function InboxPage() {
         tasks that have been assigned to you. Please review the new assignments
         and take action as needed.
       </p>
-      {newAssignments.length === 0 && reactedAssignments.length === 0 && (
-        <div className="flex h-full justify-center items-center">
-          <h2 className="text-center mb-2">You have no assignments</h2>
+      {isLoading && (
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-[8.75rem]" />
+          <Skeleton className="h-[8.75rem]" />
         </div>
       )}
+      {!isLoading &&
+        newAssignments.length === 0 &&
+        reactedAssignments.length === 0 && (
+          <div className="flex h-full justify-center items-center">
+            <h2 className="text-center mb-2">You have no assignments</h2>
+          </div>
+        )}
       {newAssignments.length > 0 && (
         <div className="mb-4">
           <h2 className="text-2xl font-semibold mb-2">New Assignments</h2>
