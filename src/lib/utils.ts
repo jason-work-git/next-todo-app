@@ -1,4 +1,4 @@
-import { Task } from '@prisma/client';
+import { Task, TaskPriority } from '@prisma/client';
 import { clsx, type ClassValue } from 'clsx';
 import { isToday } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
@@ -170,5 +170,17 @@ export const getSortedTasks = (tasks: Task[], sortOption: SortOptions) => {
       return tasks;
   }
 };
+
+export function getPriorityColor(priority: TaskPriority) {
+  switch (priority) {
+    case TaskPriority.HIGH:
+      return '#f56565'; // Red
+    case TaskPriority.MEDIUM:
+      return '#ecc94b'; // Yellow
+    case TaskPriority.LOW:
+    default:
+      return '#48bb78'; // Green
+  }
+}
 
 // TODO: refactor this to folder because this file is too big and complex

@@ -93,6 +93,7 @@ export const TaskDetails = ({
       title: formData.title,
       description: formData.description,
       dueDate: formData.dueDate,
+      priority: formData.priority,
     });
   };
 
@@ -116,6 +117,7 @@ export const TaskDetails = ({
             title: task.title,
             description: task.description,
             dueDate: task.dueDate,
+            priority: task.priority,
           }}
           onSubmit={handleSubmit}
         />
@@ -170,6 +172,7 @@ export const TaskDetails = ({
           title: task.title,
           description: task.description,
           dueDate: task.dueDate,
+          priority: task.priority,
         }}
         onSubmit={handleSubmit}
       />

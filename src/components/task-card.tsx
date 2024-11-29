@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { DateIcon } from './ui/date-icon';
 
 import { Task } from '@prisma/client';
-import { cn, formatDate } from '@/lib/utils';
+import { cn, formatDate, getPriorityColor } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 import useUpdateTaskMutation from '@/hooks/useUpdateTaskMutation';
@@ -19,7 +19,7 @@ export type TaskCardProps = React.HTMLAttributes<HTMLDivElement> & {
 };
 
 export const TaskCard = ({
-  task: { id, title, description, completed, dueDate },
+  task: { id, title, description, completed, dueDate, priority },
   showDueDate = true,
   shared,
   ref,
@@ -45,6 +45,8 @@ export const TaskCard = ({
     }
   };
 
+  console.log(priority);
+
   return (
     <Card
       role="button"
@@ -54,12 +56,19 @@ export const TaskCard = ({
       className={cn(
         'cursor-pointer active:scale-[.97] transition-transform duration-200 has-[.checkbox:active]:scale-100',
         'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+        'relative overflow-hidden',
         className,
       )}
       ref={ref}
       {...props}
     >
-      <CardHeader className="p-4 space-y-0">
+      {priority && (
+        <div
+          style={{ backgroundColor: getPriorityColor(priority) }}
+          className={cn('top-0 w-full absolute h-1')}
+        />
+      )}
+      <CardHeader className="p-4 space-y-0 ">
         <div className="flex flex-row gap-2 items-center">
           <Checkbox
             className="checkbox size-5 rounded-full"
