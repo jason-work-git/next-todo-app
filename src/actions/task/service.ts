@@ -8,6 +8,25 @@ function getUserTaskById(authorId: User['id'], taskId: Task['id']) {
   });
 }
 
+function getDetailedUserTaskById(userId: User['id'], taskId: Task['id']) {
+  return prisma.task.findUnique({
+    where: { id: taskId, assignments: { some: { userId } } },
+    include: {
+      assignments: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
 function getUserTasks(authorId: User['id']) {
   return prisma.task.findMany({
     where: { assignments: { some: { userId: authorId } } },
@@ -25,43 +44,17 @@ async function getUserTaskByIdOrThrow(
   return task;
 }
 
-function getTodayUserTasks(authorId: User['id']) {
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const endOfDay = new Date();
-  endOfDay.setHours(23, 59, 59, 999);
-
+function getAcceptedUserTasks(authorId: User['id']) {
   return prisma.task.findMany({
-    where: {
-      assignments: { some: { userId: authorId } },
-      AND: {
-        dueDate: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-      },
-    },
+    where: { assignments: { some: { userId: authorId, accepted: true } } },
   });
 }
 
-function getTodayUncompletedUserTasks(authorId: User['id']) {
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-
-  const endOfDay = new Date();
-  endOfDay.setHours(23, 59, 59, 999);
-
+function getAcceptedDetailedUserTasks(userId: User['id']) {
   return prisma.task.findMany({
-    where: {
-      assignments: { some: { userId: authorId } },
-      AND: {
-        dueDate: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-        completed: false,
-      },
+    where: { assignments: { some: { userId, accepted: true } } },
+    include: {
+      assignments: true,
     },
   });
 }
@@ -77,6 +70,20 @@ function createTask(authorId: User['id'], dto: AddTaskDto) {
   });
 }
 
+function createDetailedTask(authorId: User['id'], dto: AddTaskDto) {
+  return prisma.task.create({
+    data: {
+      ...dto,
+      assignments: {
+        create: { userId: authorId, role: TaskRole.OWNER, accepted: true },
+      },
+    },
+    include: {
+      assignments: true,
+    },
+  });
+}
+
 function updateTaskById(taskId: Task['id'], dto: UpdateTaskDto) {
   return prisma.task.update({ where: { id: taskId }, data: dto });
 }
@@ -88,10 +95,12 @@ function deleteTaskById(taskId: Task['id']) {
 export const taskService = {
   getUserTaskByIdOrThrow,
   getUserTaskById,
+  getDetailedUserTaskById,
   getUserTasks,
-  getTodayUserTasks,
-  getTodayUncompletedUserTasks,
+  getAcceptedUserTasks,
+  getAcceptedDetailedUserTasks,
   deleteTaskById,
   updateTaskById,
   createTask,
+  createDetailedTask,
 };

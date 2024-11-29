@@ -3,15 +3,29 @@
 import { AddTaskDto, DeleteTaskDto, UpdateTaskDto } from './types';
 import { requireAuth } from '../auth/middlewares';
 import { taskService } from './service';
-import { Prisma, Task } from '@prisma/client';
+import { Prisma, Task, TaskRole } from '@prisma/client';
 
 export const getTasks = requireAuth(async ({ session }) => {
   return taskService.getUserTasks(session.user.id);
 });
 
+export const getAcceptedTasks = requireAuth(async ({ session }) => {
+  return taskService.getAcceptedUserTasks(session.user.id);
+});
+
+export const getAcceptedDetailedTasks = requireAuth(async ({ session }) => {
+  return taskService.getAcceptedDetailedUserTasks(session.user.id);
+});
+
 export const getTaskById = requireAuth(async ({ session }, id: Task['id']) => {
   return taskService.getUserTaskById(session.user.id, id);
 });
+
+export const getDetailedTaskById = requireAuth(
+  async ({ session }, id: Task['id']) => {
+    return taskService.getDetailedUserTaskById(session.user.id, id);
+  },
+);
 
 export const addTask = requireAuth(async ({ session }, data: AddTaskDto) => {
   try {
@@ -32,9 +46,36 @@ export const addTask = requireAuth(async ({ session }, data: AddTaskDto) => {
 export const updateTask = requireAuth(
   async ({ session }, data: UpdateTaskDto) => {
     const authorId = session.user.id;
-    const task = await taskService.getUserTaskByIdOrThrow(authorId, data.id);
+    const task = await taskService.getDetailedUserTaskById(authorId, data.id);
 
-    return taskService.updateTaskById(task.id, data);
+    if (!task) {
+      throw new Error('Task not found.');
+    }
+
+    const role = task.assignments[0].role;
+
+    if (role === TaskRole.OWNER) {
+      return taskService.updateTaskById(task.id, data);
+    }
+
+    if (role === TaskRole.VIEWER) {
+      return taskService.updateTaskById(task.id, {
+        id: task.id,
+        completed: data.completed,
+      });
+    }
+
+    if (role === TaskRole.EDITOR) {
+      return taskService.updateTaskById(task.id, {
+        id: task.id,
+        title: data.title,
+        description: data.description,
+        dueDate: data.dueDate,
+        completed: data.completed,
+      });
+    }
+
+    throw new Error('You are not allowed to update this task.');
   },
 );
 

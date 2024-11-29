@@ -1,7 +1,7 @@
 'use client';
 
-import { getTasks } from '@/actions/task/controller';
-import { AddTaskButton } from '@/components/add-task-button';
+import { DetailedTask } from '@/actions/task/types';
+import { AddTaskFlow } from '@/components/add-task-flow';
 import { TaskCard } from '@/components/task-card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,13 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import useTasksQuery from '@/hooks/useTasksQuery';
 import {
   SortOptions,
   filterUncompletedTasks,
   getSortedTasks,
 } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowDownUp, FilterIcon } from 'lucide-react';
+
+import { ArrowDownUp, FilterIcon, Plus } from 'lucide-react';
 import { useState } from 'react';
 
 const SortSelect = ({
@@ -66,14 +67,13 @@ export default function AllPage() {
   const [sort, setSort] = useState<SortOptions>(SortOptions.CREATED_ASC);
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryFn: getTasks,
-    queryKey: ['tasks'],
-  });
+  const { data, isLoading } = useTasksQuery();
 
-  const tasks = showCompleted
-    ? getSortedTasks(data || [], sort)
-    : filterUncompletedTasks(getSortedTasks(data || [], sort));
+  const tasks = (
+    showCompleted
+      ? getSortedTasks(data || [], sort)
+      : filterUncompletedTasks(getSortedTasks(data || [], sort))
+  ) as DetailedTask[];
 
   return (
     <>
@@ -113,11 +113,22 @@ export default function AllPage() {
         {isLoading && <div>Loading...</div>}
 
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard
+            shared={task.assignments?.length > 1}
+            key={task.id}
+            task={task}
+          />
         ))}
 
-        <AddTaskButton
-          className="fixed bottom-20 right-8"
+        <AddTaskFlow
+          trigger={
+            <Button
+              size={'icon'}
+              className="fixed bottom-20 right-8 gap-1 size-12 rounded-lg"
+            >
+              <Plus className="!size-7" />
+            </Button>
+          }
           defaultDueDate={new Date()}
         />
       </div>

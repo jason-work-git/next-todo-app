@@ -26,14 +26,18 @@ export default function useDeleteTaskMutation({
   onMutate,
   onError,
   onSuccess,
+  onSettled,
   ...options
 }: UseDeleteTaskMutationOptions = {}) {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Task, Error, DeleteTaskDto, TContext>({
     mutationFn: deleteTask,
-    onMutate: (data) => {
+    onMutate: async (data) => {
       const { id } = data;
+      await queryClient.cancelQueries({ queryKey: ['tasks'] });
+      await queryClient.cancelQueries({ queryKey: ['tasks', id] });
+
       const previousTasks = queryClient.getQueryData<Task[]>(['tasks']);
       const previousTask = queryClient.getQueryData<Task>(['tasks', id]);
 
@@ -75,6 +79,14 @@ export default function useDeleteTaskMutation({
 
       if (onSuccess) {
         onSuccess(deletedTask, variables, context);
+      }
+    },
+    onSettled: (data, error, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', variables.id] });
+
+      if (onSettled) {
+        onSettled(data, error, variables, context);
       }
     },
     ...options,

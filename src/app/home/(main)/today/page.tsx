@@ -1,17 +1,31 @@
 'use client';
-import { AddTaskButton } from '@/components/add-task-button';
-import { TaskCard } from '@/components/task-card';
-import { getTasks } from '@/actions/task/controller';
-import { useQuery } from '@tanstack/react-query';
-import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
+
 import { Skeleton } from '@/components/ui/skeleton';
+
+import { AddTaskFlow } from '@/components/add-task-flow';
+import { TaskCard } from '@/components/task-card';
+
+import { filterTodayTasks, getFormattedDate } from '@/lib/utils';
+import { DetailedTask } from '@/actions/task/types';
+import useTasksQuery from '@/hooks/useTasksQuery';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+
 export default function MainPage() {
   const formattedToday = getFormattedDate(new Date());
-  const { data, isLoading } = useQuery({
-    queryFn: getTasks,
-    queryKey: ['tasks'],
-  });
-  const tasks = data ? filterTodayTasks(data) : [];
+
+  const { data, isLoading } = useTasksQuery();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!data) {
+    return <div>No tasks found</div>;
+  }
+
+  const tasks = filterTodayTasks(data) as DetailedTask[];
+
   return (
     <>
       <header className="mb-4">
@@ -35,12 +49,26 @@ export default function MainPage() {
         </>
       )}
 
-      <div className="flex-grow overflow-y-auto space-y-2 p-px">
-        {tasks.map((task) => (
-          <TaskCard showDueDate={false} key={task.id} task={task} />
-        ))}
-        <AddTaskButton
-          className="fixed bottom-20 right-8"
+      <div className="flex-grow overflow-y-auto space-y-2 p-px pb-4">
+        {tasks.map((task) => {
+          return (
+            <TaskCard
+              shared={task.assignments?.length > 1}
+              showDueDate={false}
+              key={task.id}
+              task={task}
+            />
+          );
+        })}
+        <AddTaskFlow
+          trigger={
+            <Button
+              size={'icon'}
+              className="fixed bottom-20 right-8 gap-1 size-12 rounded-lg"
+            >
+              <Plus className="!size-7" />
+            </Button>
+          }
           defaultDueDate={new Date()}
         />
       </div>

@@ -1,18 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { LogoutButton } from '@/components/logout-button';
+import UpdateProfileForm from '@/components/update-profile-form';
+import { getCurrentUser } from '@/actions/auth/controller';
 
-import { auth, signOut } from '@/auth';
-import { LogOut } from 'lucide-react';
-
-export default async function Page() {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    throw new Error('Unauthorized');
-  }
-
-  const { name, email } = session.user;
+export default async function ProfilePage() {
+  const user = await getCurrentUser();
 
   return (
     <div className="flex flex-col h-full gap-4 pb-4">
@@ -22,30 +13,10 @@ export default async function Page() {
           Your profile information and settings.
         </p>
       </div>
-      <form className="space-y-4">
-        <Label className="flex flex-col gap-2">
-          Name
-          <Input value={name || ''} readOnly />
-        </Label>
-        <Label className="flex flex-col gap-2">
-          Email
-          <Input value={email || ''} readOnly />
-        </Label>
-      </form>
 
-      <form
-        className="mt-auto"
-        action={async () => {
-          'use server';
+      <UpdateProfileForm user={user} />
 
-          await signOut();
-        }}
-      >
-        <Button className="w-full" variant={'outline'}>
-          <LogOut />
-          Logout
-        </Button>
-      </form>
+      <LogoutButton variant={'outline'} className="w-full mt-auto" />
     </div>
   );
 }

@@ -19,8 +19,10 @@ export const EditTaskForm = ({
   onSubmit,
   initialState,
   className,
+  disabled,
   ...props
 }: Omit<React.HTMLAttributes<HTMLFormElement>, 'onSubmit'> & {
+  disabled?: boolean;
   initialState: EditFormData;
   onSubmit: (formData: EditFormData) => void;
 }) => {
@@ -44,12 +46,13 @@ export const EditTaskForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn('px-4 flex flex-col gap-4', className)}
+      className={cn('flex flex-col gap-4', className)}
       {...props}
     >
       <Label className="flex flex-col gap-2">
         Title
         <Input
+          disabled={disabled}
           name="title"
           required
           value={formData.title}
@@ -59,6 +62,7 @@ export const EditTaskForm = ({
       <Label className="flex flex-col gap-2">
         Description
         <Textarea
+          disabled={disabled}
           name="description"
           value={formData.description || ''}
           onChange={onChange}
@@ -67,13 +71,13 @@ export const EditTaskForm = ({
       <div className="flex flex-col gap-2 items-start">
         <span className="text-sm font-medium leading-none">Due date</span>
         <DateSelect
-          // disabled={isPending}
+          disabled={disabled}
           selectedDate={formData.dueDate}
           onSelectDate={(value) => setFormData({ ...formData, dueDate: value })}
         />
       </div>
 
-      <Button disabled={!isChanged} type="submit">
+      <Button disabled={!isChanged || disabled} type="submit">
         Save
       </Button>
     </form>

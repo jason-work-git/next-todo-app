@@ -18,36 +18,33 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { DialogTriggerProps } from '@radix-ui/react-dialog';
+import { DialogProps } from '@radix-ui/react-dialog';
 import { Input } from '@/components/ui/input';
 import { LoadingButton } from '@/components/ui/loading-button';
-
-import { useMutation } from '@tanstack/react-query';
-import { requestPasswordReset } from '@/actions/auth/controller';
-import { toast } from 'sonner';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useRequestPasswordReset } from '@/hooks/useRequestPasswordReset';
+import { Button } from './ui/button';
 
-export default function ForgotPasswordTrigger({
+type Props = Omit<DialogProps, 'children'> & {
+  trigger?: React.ReactNode;
+};
+
+export default function ForgotPasswordFlow({
+  trigger: propTrigger,
   ...props
-}: DialogTriggerProps) {
+}: Props) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: requestPasswordReset,
-    onSuccess: () => {
-      toast.success('Password reset link was sent to your email');
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { requestPasswordReset, isPending } = useRequestPasswordReset();
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
-    mutate(email);
+    requestPasswordReset(email);
   };
+
+  const trigger = propTrigger ?? <Button>Forgot password?</Button>;
 
   const title = 'Forgot password? Donut worry 🍩';
 
@@ -60,8 +57,8 @@ export default function ForgotPasswordTrigger({
 
   if (isDesktop) {
     return (
-      <Dialog>
-        <DialogTrigger {...props} />
+      <Dialog {...props}>
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent className="rounded w-[400px]">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -89,8 +86,8 @@ export default function ForgotPasswordTrigger({
   }
 
   return (
-    <Drawer>
-      <DrawerTrigger {...props} />
+    <Drawer {...props}>
+      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>

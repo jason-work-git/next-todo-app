@@ -1,15 +1,17 @@
 'use client';
 
 import * as React from 'react';
-import { Drawer as DrawerPrimitive } from 'vaul';
+import { DialogProps, Drawer as DrawerPrimitive } from 'vaul';
 
 import { cn } from '@/lib/utils';
+
+export type DrawerProps = DialogProps;
 
 const Drawer = ({
   shouldScaleBackground = true,
   repositionInputs = false,
   ...props
-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
+}: DrawerProps) => (
   <DrawerPrimitive.Root
     shouldScaleBackground={shouldScaleBackground}
     repositionInputs={repositionInputs}

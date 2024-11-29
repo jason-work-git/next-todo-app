@@ -1,31 +1,39 @@
-import { CalendarCheck, ListTodo, User } from 'lucide-react';
+import {
+  CalendarCheck,
+  Inbox,
+  ListTodo,
+  LucideProps,
+  User,
+} from 'lucide-react';
+import { ForwardRefExoticComponent, RefAttributes } from 'react';
 
-export const routes = [
+type Route = {
+  icon: ForwardRefExoticComponent<
+    Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+  >;
+  title: string;
+  href: string;
+};
+
+export const routes: Route[] = [
   {
-    children: (
-      <>
-        <CalendarCheck />
-        <span>Today</span>
-      </>
-    ),
+    title: 'Today',
+    icon: CalendarCheck,
     href: '/home/today',
   },
   {
-    children: (
-      <>
-        <ListTodo />
-        <span>All tasks</span>
-      </>
-    ),
+    title: 'All tasks',
+    icon: ListTodo,
     href: '/home/all',
   },
   {
-    children: (
-      <>
-        <User />
-        <span>Profile</span>
-      </>
-    ),
+    title: 'Inbox',
+    icon: Inbox,
+    href: '/home/inbox',
+  },
+  {
+    title: 'Profile',
+    icon: User,
     href: '/home/profile',
   },
 ];

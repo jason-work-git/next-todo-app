@@ -49,6 +49,11 @@ openssl rand -base64 32
 
 One option is to use [Vercel’s free storage](https://vercel.com/docs/storage/vercel-postgres) to create a PostgreSQL database.
 
+#### How to Obtain the SMTP Key
+
+You can obtain it by registering at [Brevo](https://www.brevo.com/) and retrieving the SMTP key.
+Next, create a link following the structure provided in `.env.example`.
+
 ### 3. Installing Dependencies
 
 After editing the `.env` file, run:
