@@ -99,13 +99,14 @@ export const AddTaskFlow = ({
             dueDate: defaultDueDate,
           }}
           onSettled={onAdd}
-        />
-
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
+        >
+          <DrawerFooter className="px-0">
+            <LoadingButton type="submit">Add</LoadingButton>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </AddTaskForm>
       </DrawerContent>
     </Drawer>
   );
