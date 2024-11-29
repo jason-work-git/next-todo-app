@@ -52,7 +52,7 @@ export const AddTaskFlow = ({
 
   if (isDesktop) {
     return (
-      <Dialog>
+      <Dialog open={isOpened} onOpenChange={setIsOpened} {...props}>
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -67,6 +67,7 @@ export const AddTaskFlow = ({
               dueDate: defaultDueDate,
             }}
             onSettled={onAdd}
+            onMutate={() => setIsOpened(false)}
           >
             <DialogFooter>
               <LoadingButton type="submit">Add</LoadingButton>
@@ -99,6 +100,7 @@ export const AddTaskFlow = ({
             dueDate: defaultDueDate,
           }}
           onSettled={onAdd}
+          onMutate={() => setIsOpened(false)}
         >
           <DrawerFooter className="px-0">
             <LoadingButton type="submit">Add</LoadingButton>
