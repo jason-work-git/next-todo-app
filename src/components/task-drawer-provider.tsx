@@ -10,7 +10,12 @@ import {
   useState,
 } from 'react';
 
-import { TaskDetails } from '@/components/task-details';
+import { useQuery } from '@tanstack/react-query';
+import { getDetailedTaskById } from '@/actions/task/controller';
+import { DetailedTask } from '@/actions/task/types';
+import useUserQuery from '@/hooks/use-user-query';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+
 import {
   Drawer,
   DrawerContent,
@@ -19,15 +24,16 @@ import {
   DrawerProps,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { useQuery } from '@tanstack/react-query';
-import { Skeleton } from './ui/skeleton';
-import { getDetailedTaskById } from '@/actions/task/controller';
-import { DetailedTask } from '@/actions/task/types';
-
-import useUserQuery from '@/hooks/use-user-query';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { Dialog, DialogContent } from './ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from './ui/dialog';
 import { DialogProps } from '@radix-ui/react-dialog';
+import { EditTaskForm } from './edit-task-form';
+import { TaskDetails } from './task-details';
 
 const TaskDrawerContext = createContext<{
   open: boolean;
@@ -88,6 +94,44 @@ const FlowLayout = ({
   );
 };
 
+const TaskFlowSkeleton = () => {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  const title = 'Edit task';
+  const description = 'Provide new task details';
+
+  if (isDesktop) {
+    return (
+      <>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        <EditTaskForm
+          onSubmit={() => {}}
+          initialState={{ description: '', title: '', dueDate: null }}
+          disabled={true}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <DrawerHeader>
+        <DrawerTitle>{title}</DrawerTitle>
+        <DrawerDescription>{description}</DrawerDescription>
+      </DrawerHeader>
+      <EditTaskForm
+        className="px-4 pb-4 animate-pulse"
+        onSubmit={() => {}}
+        initialState={{ description: '', title: '', dueDate: null }}
+        disabled={true}
+      />
+    </>
+  );
+};
+
 function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -132,11 +176,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
       value={{ open, setOpen, close, task: task || null }}
     >
       <FlowLayout open={open} onOpenChange={setOpen} onClose={close}>
-        {loading && (
-          <TempLayout>
-            <Skeleton className="w-full h-[4.625rem]" />
-          </TempLayout>
-        )}
+        {loading && <TaskFlowSkeleton />}
         {error && <TempLayout>{error.message}</TempLayout>}
         {task && user && <TaskDetails task={task} userId={user.id} />}
       </FlowLayout>
