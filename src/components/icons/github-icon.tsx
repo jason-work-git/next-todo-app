@@ -1,9 +1,5 @@
-const GithubIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    viewBox="0 0 98 96"
-  >
+const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg xmlns="http://www.w3.org/2000/svg" {...props} viewBox="0 0 98 96">
     <path
       fill="currentColor"
       fillRule="evenodd"

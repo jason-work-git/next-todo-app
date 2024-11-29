@@ -9,7 +9,9 @@ import type { User as DBUser } from '@prisma/client';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextResponse } from 'next/server';
 import { userService } from '@/actions/user/service';
-// import GitHub from 'next-auth/providers/github';
+import GitHub from 'next-auth/providers/github';
+import Google from 'next-auth/providers/google';
+import Discord from 'next-auth/providers/discord';
 
 declare module 'next-auth' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -102,7 +104,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
-    // TODO: handle it later
-    // GitHub,
+    GitHub({
+      allowDangerousEmailAccountLinking: true,
+    }),
+    Google({
+      allowDangerousEmailAccountLinking: true,
+    }),
+    Discord({
+      allowDangerousEmailAccountLinking: true,
+    }),
   ],
 });

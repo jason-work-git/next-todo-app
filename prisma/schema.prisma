@@ -40,9 +40,31 @@ model User {
   password String
 
   tokens      Token[]
+  accounts    Account[]
   assignments Assignment[]
-  updatedAt   DateTime     @updatedAt
   createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
 }
 
 model Assignment {
@@ -68,6 +90,7 @@ model Task {
   title       String
   description String?
   dueDate     DateTime?
+  // TODO: add: priority Int @default(0)
 
   assignments Assignment[]
 
