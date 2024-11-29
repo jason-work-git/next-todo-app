@@ -17,6 +17,9 @@ import { ShareTaskFlow } from './share-task-flow';
 import { DetailedTask } from '@/actions/task/types';
 import { InfoIcon, Share } from 'lucide-react';
 import { Button } from './ui/button';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { DialogFooter, DialogHeader, DialogTitle } from './ui/dialog';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 export const TaskDetails = ({
   task,
@@ -30,6 +33,8 @@ export const TaskDetails = ({
     onMutate: () => close(),
   });
 
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+
   const isShared = task.assignments ? task.assignments.length > 1 : false;
   const owner =
     task.assignments &&
@@ -37,6 +42,50 @@ export const TaskDetails = ({
   const role =
     task.assignments &&
     (task.assignments.find((a) => a.userId === userId)?.role as TaskRole);
+
+  const sharedToInfo = role === TaskRole.OWNER && (
+    <>
+      {isShared && (
+        <div className="px-4 flex flex-col gap-2">
+          <div className="flex gap-2">
+            <InfoIcon className="text-blue-500 flex-shrink-0" />
+            <span>This task has been shared to: </span>
+          </div>
+          <ul className="list-disc pl-8">
+            {task.assignments
+              .filter((a) => a.role !== TaskRole.OWNER)
+              .map((a) => (
+                <li key={a.id}>
+                  {a.user.name} ({a.user.email}) (
+                  {a.accepted === null
+                    ? 'pending'
+                    : a.accepted
+                      ? 'accepted'
+                      : 'declined'}
+                  )
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+    </>
+  );
+
+  const sharedByInfo = isShared && owner && role !== TaskRole.OWNER && (
+    <div className="px-4 flex gap-2">
+      <InfoIcon className="text-blue-500 flex-shrink-0" />
+      <div>
+        <span>
+          This task has been shared by: {owner.name} ({owner.email})
+        </span>
+        <br />
+        <span>
+          {role === TaskRole.VIEWER && 'You can only view it'}
+          {role === TaskRole.EDITOR && 'You can edit it'}
+        </span>
+      </div>
+    </div>
+  );
 
   const handleSubmit = (formData: EditFormData) => {
     mutate({
@@ -47,6 +96,51 @@ export const TaskDetails = ({
     });
   };
 
+  const title = 'Edit task';
+  const description = 'Provide new task details';
+
+  if (isDesktop) {
+    return (
+      <>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+
+        {sharedToInfo}
+
+        <EditTaskForm
+          disabled={role === TaskRole.VIEWER}
+          className="pb-0"
+          initialState={{
+            title: task.title,
+            description: task.description,
+            dueDate: task.dueDate,
+          }}
+          onSubmit={handleSubmit}
+        />
+
+        <DialogFooter>
+          {role === TaskRole.OWNER && (
+            <>
+              <ShareTaskFlow
+                taskId={task.id}
+                trigger={
+                  <Button variant={'ghost'}>
+                    <Share /> Share
+                  </Button>
+                }
+              />
+
+              <DeleteTaskButton taskId={task.id} onDelete={close} />
+            </>
+          )}
+          {sharedByInfo}
+        </DialogFooter>
+      </>
+    );
+  }
+
   return (
     <>
       <DrawerHeader>
@@ -54,47 +148,24 @@ export const TaskDetails = ({
         <DrawerDescription>Provide new task details</DrawerDescription>
       </DrawerHeader>
 
+      {sharedToInfo}
+
       {role === TaskRole.OWNER && (
-        <>
-          {isShared && (
-            <div className="px-4 flex flex-col gap-2">
-              <div className="flex gap-2">
-                <InfoIcon className="text-blue-500 flex-shrink-0" />
-                <span>This task has been shared to: </span>
-              </div>
-              <ul className="list-disc pl-8">
-                {task.assignments
-                  .filter((a) => a.role !== TaskRole.OWNER)
-                  .map((a) => (
-                    <li key={a.id}>
-                      {a.user.name} ({a.user.email}) (
-                      {a.accepted === null
-                        ? 'pending'
-                        : a.accepted
-                          ? 'accepted'
-                          : 'declined'}
-                      )
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          )}
-          <div className="flex justify-end px-4 mb-2">
-            <ShareTaskFlow
-              taskId={task.id}
-              trigger={
-                <Button variant={'ghost'}>
-                  <Share /> Share
-                </Button>
-              }
-            />
-          </div>
-        </>
+        <div className="flex justify-end px-4 mb-2">
+          <ShareTaskFlow
+            taskId={task.id}
+            trigger={
+              <Button variant={'ghost'}>
+                <Share /> Share
+              </Button>
+            }
+          />
+        </div>
       )}
 
       <EditTaskForm
         disabled={role === TaskRole.VIEWER}
-        className="pb-0"
+        className="pb-0 px-4"
         initialState={{
           title: task.title,
           description: task.description,
@@ -104,24 +175,10 @@ export const TaskDetails = ({
       />
 
       <DrawerFooter>
-        {isShared && owner && role !== TaskRole.OWNER && (
-          <div className="px-4 flex gap-2">
-            <InfoIcon className="text-blue-500 flex-shrink-0" />
-            <div>
-              <span>
-                This task has been shared by: {owner.name} ({owner.email})
-              </span>
-              <br />
-              <span>
-                {role === TaskRole.VIEWER && 'You can only view it'}
-                {role === TaskRole.EDITOR && 'You can edit it'}
-              </span>
-            </div>
-          </div>
-        )}
         {role === TaskRole.OWNER && (
           <DeleteTaskButton taskId={task.id} onDelete={close} />
         )}
+        {sharedByInfo}
       </DrawerFooter>
     </>
   );
