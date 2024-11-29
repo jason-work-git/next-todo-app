@@ -65,7 +65,17 @@ const FlowLayout = ({
 
   if (isDesktop) {
     return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog
+        open={open}
+        onOpenChange={(open) => {
+          if (onOpenChange) {
+            if (!open && onClose) {
+              onClose();
+            }
+            onOpenChange(open);
+          }
+        }}
+      >
         <DialogContent>{children}</DialogContent>
       </Dialog>
     );
