@@ -1,13 +1,13 @@
 'use client';
 import React, { useState } from 'react';
-import ConfirmDrawer, { ConfirmDrawerProps } from './confirm-drawer';
+import ConfirmFlow, { ConfirmFlowProps } from './confirm-flow';
 import { Button } from './ui/button';
 import { useRequestPasswordReset } from '@/hooks/useRequestPasswordReset';
 import { User } from '@prisma/client';
 
-export type Props = Omit<ConfirmDrawerProps, 'title' | 'trigger'> & {
-  title?: ConfirmDrawerProps['title'];
-  trigger?: ConfirmDrawerProps['trigger'];
+export type Props = Omit<ConfirmFlowProps, 'title' | 'trigger'> & {
+  title?: ConfirmFlowProps['title'];
+  trigger?: ConfirmFlowProps['trigger'];
   userEmail: User['email'];
 };
 
@@ -22,7 +22,7 @@ const ResetPasswordDrawer: React.FC<Props> = ({ userEmail, ...rest }) => {
   };
 
   return (
-    <ConfirmDrawer
+    <ConfirmFlow
       open={isOpen}
       onOpenChange={setIsOpen}
       title="Are you sure you want to reset your password?"

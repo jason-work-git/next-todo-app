@@ -92,7 +92,7 @@ export default function InboxPage() {
         </div>
       )}
       {newAssignments.length > 0 && (
-        <div>
+        <div className="mb-4">
           <h2 className="text-2xl font-semibold mb-2">New Assignments</h2>
           <AssignmentsList
             assignments={newAssignments}

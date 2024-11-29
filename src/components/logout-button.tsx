@@ -2,16 +2,10 @@
 
 import { LogOut } from 'lucide-react';
 import { Button, ButtonProps } from './ui/button';
-import { useQueryClient } from '@tanstack/react-query';
-import { signOut } from 'next-auth/react';
+import { useLogout } from '@/hooks/use-logout';
 
 export const LogoutButton = (props: ButtonProps) => {
-  const queryClient = useQueryClient();
-
-  const logout = async () => {
-    queryClient.removeQueries();
-    await signOut();
-  };
+  const logout = useLogout();
 
   return (
     <Button onClick={logout} {...props}>

@@ -71,21 +71,3 @@ export const updateAssignmentAcceptedStatus = requireAuth(
     });
   },
 );
-
-// export const updateAssignment = requireAuth(
-//   async (
-//     { session },
-//     { id, ...data }: UpdateAssignmentDto & { id: Assignment['id'] },
-//   ) => {
-//     return assignmentService.updateAssignment(id, data);
-//   },
-// );
-
-/* flow:
-
-1. task owner wants to share a task
-2. he searches for the user via email or maybe by name idk i'll refactor this later this doesn't matter
-3. he provides task role
-4. assignment is created
-
-*/

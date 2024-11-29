@@ -46,7 +46,7 @@ export const EditTaskForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn('px-4 flex flex-col gap-4', className)}
+      className={cn('flex flex-col gap-4', className)}
       {...props}
     >
       <Label className="flex flex-col gap-2">
