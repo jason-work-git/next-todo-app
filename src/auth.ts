@@ -3,26 +3,20 @@ import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
 import prisma from '@/prisma-client';
+import { CustomPrismaAdapter } from './lib/prisma-adapter';
 import { z } from 'zod';
-import type { User as DBUser } from '@prisma/client';
 
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import { NextResponse } from 'next/server';
 import { userService } from '@/actions/user/service';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 import Discord from 'next-auth/providers/discord';
 
-declare module 'next-auth' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface User extends Omit<DBUser, 'password'> {}
-}
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: '/auth/login',
   },
-  adapter: PrismaAdapter(prisma),
+  adapter: CustomPrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
   },
@@ -89,6 +83,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!user.verified) {
           return null;
           throw new Error('User is not verified');
+        }
+
+        if (!user.password) {
+          return null;
+          throw new Error('Password is not set');
         }
 
         const passwordsMatch = await compare(password, user.password);
