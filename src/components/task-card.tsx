@@ -65,7 +65,7 @@ export const TaskCard = ({
       {priority && (
         <div
           style={{ backgroundColor: getPriorityColor(priority) }}
-          className={cn('top-0 w-full absolute h-1')}
+          className={cn('left-0 w-1 absolute h-full')}
         />
       )}
       <CardHeader className="p-4 space-y-0 ">
