@@ -9,13 +9,12 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier . --write",
-    "setup": "npx prisma generate && npx prisma migrate deploy",
-    "build:seed": "tsc prisma/seed.ts --outDir prisma/compiled",
-    "seed": "npm run build:seed && npx prisma db seed",
-    "admin": "npx prisma studio"
+    "setup": "prisma generate && prisma migrate deploy",
+    "seed": "prisma db seed",
+    "admin": "prisma studio"
   },
   "prisma": {
-    "seed": "node prisma/compiled/seed.js"
+    "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
