@@ -29,7 +29,7 @@ export const register = async ({
 }: {
   name: string;
   email: User['email'];
-  password: User['password'];
+  password: string;
 }) => {
   const existingUser = await userService.getUserByEmail(email);
 
@@ -60,7 +60,7 @@ export const login = async ({
   password,
 }: {
   email: User['email'];
-  password: User['password'];
+  password: string;
 }) => {
   try {
     await signIn('credentials', { email, password });
@@ -162,7 +162,7 @@ export const resetPassword = async ({
   token,
 }: {
   token: Token['token'];
-  newPassword: User['password'];
+  newPassword: string;
 }) => {
   const { verifiedToken, user } = await getVerifiedToken(token);
 

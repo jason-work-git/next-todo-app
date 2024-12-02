@@ -1,11 +1,21 @@
-import { PrismaClient, Task, User, Assignment, TaskRole } from '@prisma/client';
+import {
+  PrismaClient,
+  Task,
+  User as PrismaUser,
+  Assignment,
+  TaskRole,
+} from '@prisma/client';
 import * as fs from 'fs';
 import * as bcrypt from 'bcryptjs';
+
+type MockUser = Omit<PrismaUser, 'id' | 'password'> & {
+  password: string;
+};
 
 const prisma = new PrismaClient();
 const usersData = JSON.parse(
   fs.readFileSync('prisma/mocks/mock-users.json', 'utf8'),
-) as Omit<User, 'id'>[];
+) as MockUser[];
 const tasksData = JSON.parse(
   fs.readFileSync('prisma/mocks/mock-tasks.json', 'utf8'),
 ) as Omit<Task, 'id'>[];
@@ -19,7 +29,7 @@ const importantUsers = [
   },
 ];
 
-const hashPasswords = (users: Omit<User, 'id'>[]) => {
+const hashPasswords = (users: MockUser[]) => {
   console.group('Hashing passwords...');
   for (let i = 0; i < users.length; i++) {
     users[i].password = bcrypt.hashSync(users[i].password, 1);
