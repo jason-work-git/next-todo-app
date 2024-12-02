@@ -4,6 +4,7 @@ import { AddTaskDto, DeleteTaskDto, UpdateTaskDto } from './types';
 import { requireAuth } from '../auth/middlewares';
 import { taskService } from './service';
 import { Prisma, Task, TaskRole } from '@prisma/client';
+import { createServerAction, ServerActionError } from '@/lib/safe-action';
 
 export const getTasks = requireAuth(async ({ session }) => {
   return taskService.getUserTasks(session.user.id);
@@ -27,29 +28,33 @@ export const getDetailedTaskById = requireAuth(
   },
 );
 
-export const addTask = requireAuth(async ({ session }, data: AddTaskDto) => {
-  try {
-    const task = await taskService.createTask(session.user.id, data);
-    return task;
-  } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === 'P2002') {
-        throw Error('Task with this id already exists');
+export const addTask = createServerAction(
+  requireAuth(async ({ session }, data: AddTaskDto) => {
+    try {
+      const task = await taskService.createTask(session.user.id, data);
+      return task;
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          throw new ServerActionError('Task with this id already exists');
+        }
+      } else {
+        throw e;
       }
-    } else {
-      throw e;
     }
-  }
-  throw Error('Task was not created due to an unexpected error');
-});
+    throw new ServerActionError(
+      'Task was not created due to an unexpected error',
+    );
+  }),
+);
 
-export const updateTask = requireAuth(
-  async ({ session }, data: UpdateTaskDto) => {
+export const updateTask = createServerAction(
+  requireAuth(async ({ session }, data: UpdateTaskDto) => {
     const authorId = session.user.id;
     const task = await taskService.getDetailedUserTaskById(authorId, data.id);
 
     if (!task) {
-      throw new Error('Task not found.');
+      throw new ServerActionError('Task not found.');
     }
 
     const role = task.assignments[0].role;
@@ -75,15 +80,15 @@ export const updateTask = requireAuth(
       });
     }
 
-    throw new Error('You are not allowed to update this task.');
-  },
+    throw new ServerActionError('You are not allowed to update this task.');
+  }),
 );
 
-export const deleteTask = requireAuth(
-  async ({ session }, { id }: DeleteTaskDto) => {
+export const deleteTask = createServerAction(
+  requireAuth(async ({ session }, { id }: DeleteTaskDto) => {
     const authorId = session.user.id;
     const task = await taskService.getUserTaskByIdOrThrow(authorId, id);
 
     return taskService.deleteTaskById(task.id);
-  },
+  }),
 );

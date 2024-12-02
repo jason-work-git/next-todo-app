@@ -1,4 +1,5 @@
 import { auth } from '@/auth';
+import { ServerActionError } from '@/lib/safe-action';
 import { Session } from 'next-auth';
 
 type Metadata = {
@@ -16,7 +17,7 @@ export const requireAuth =
     const session = await auth();
 
     if (!session || !session.user) {
-      throw new Error('Unauthorized');
+      throw new ServerActionError('Unauthorized');
     }
 
     const result = await handler(

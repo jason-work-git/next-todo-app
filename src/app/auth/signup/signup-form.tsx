@@ -12,10 +12,13 @@ import { isRedirectError } from 'next/dist/client/components/redirect';
 import { toast } from 'sonner';
 
 import { resendVerificationEmail } from '@/actions/auth/controller';
+import { createServerActionHandler } from '@/lib/safe-action';
+
+const action = createServerActionHandler(register);
 
 export default function SignUpForm() {
   const { isPending, mutate } = useMutation({
-    mutationFn: register,
+    mutationFn: action,
     onSuccess: () => {
       toast.success(
         'Email verification was sent to your email, please check the inbox.',
@@ -31,7 +34,11 @@ export default function SignUpForm() {
         action: {
           label: 'Resend',
           onClick: async () => {
-            await resendVerificationEmail({ name, email });
+            const res = await resendVerificationEmail({ name, email });
+            if (!res.success) {
+              toast.error(res.error);
+              return;
+            }
             toast.success(
               'Email verification was sent to your email, please check the inbox.',
             );

@@ -31,6 +31,7 @@ import { shareTask } from '@/actions/assignment/controller';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { createServerActionHandler } from '@/lib/safe-action';
 
 type ShareTaskFlowProps = Omit<
   DialogProps,
@@ -46,7 +47,7 @@ export const ShareTaskFlow = ({
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const { mutate, isPending } = useMutation({
-    mutationFn: shareTask,
+    mutationFn: createServerActionHandler(shareTask),
     onError(error) {
       toast.error(error.message);
     },

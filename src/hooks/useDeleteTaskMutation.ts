@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-query';
 
 import { toast } from 'sonner';
+import { createServerActionHandler } from '@/lib/safe-action';
 
 type TContext = {
   previousTasks: Task[] | undefined;
@@ -32,7 +33,7 @@ export default function useDeleteTaskMutation({
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Task, Error, DeleteTaskDto, TContext>({
-    mutationFn: deleteTask,
+    mutationFn: createServerActionHandler(deleteTask),
     onMutate: async (data) => {
       const { id } = data;
       await queryClient.cancelQueries({ queryKey: ['tasks'] });

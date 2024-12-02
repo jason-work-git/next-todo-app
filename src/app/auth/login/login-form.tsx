@@ -11,13 +11,14 @@ import { Label } from '@/components/ui/label';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { z } from 'zod';
+import { createServerActionHandler } from '@/lib/safe-action';
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const { isPending, mutate } = useMutation({
-    mutationFn: login,
+    mutationFn: createServerActionHandler(login),
     onError: (error) => {
       toast.error(error.message);
     },

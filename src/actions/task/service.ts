@@ -1,6 +1,7 @@
 import prisma from '@/prisma-client';
 import { Task, TaskRole, User } from '@prisma/client';
 import { AddTaskDto, UpdateTaskDto } from './types';
+import { ServerActionError } from '@/lib/safe-action';
 
 function getUserTaskById(authorId: User['id'], taskId: Task['id']) {
   return prisma.task.findUnique({
@@ -39,7 +40,7 @@ async function getUserTaskByIdOrThrow(
 ) {
   const task = await getUserTaskById(authorId, taskId);
   if (!task) {
-    throw new Error('Task not found');
+    throw new ServerActionError('Task not found');
   }
   return task;
 }
