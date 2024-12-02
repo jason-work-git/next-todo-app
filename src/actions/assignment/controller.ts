@@ -4,28 +4,31 @@ import { Assignment, Task, TaskRole, User } from '@prisma/client';
 import { assignmentService } from './service';
 import { userService } from '../user/service';
 import { requireAuth } from '../auth/middlewares';
+import { createServerAction, ServerActionError } from '@/lib/safe-action';
 
-export const shareTask = async ({
-  taskId,
-  role,
-  email,
-}: {
-  taskId: Task['id'];
-  role: TaskRole;
-  email: User['email'];
-}) => {
-  const user = await userService.getUserByEmail(email);
-
-  if (!user) {
-    throw new Error('User not found.');
-  }
-
-  return assignmentService.createAssignment({
+export const shareTask = createServerAction(
+  async ({
     taskId,
     role,
-    userId: user.id,
-  });
-};
+    email,
+  }: {
+    taskId: Task['id'];
+    role: TaskRole;
+    email: User['email'];
+  }) => {
+    const user = await userService.getUserByEmail(email);
+
+    if (!user) {
+      throw new ServerActionError('User not found.');
+    }
+
+    return assignmentService.createAssignment({
+      taskId,
+      role,
+      userId: user.id,
+    });
+  },
+);
 
 export const getNewNonOwnerAssignmentsCount = requireAuth(
   async ({ session }) => {
@@ -56,18 +59,20 @@ export type UpdateAcceptedStatusDto = {
   accepted: Assignment['accepted'];
 };
 
-export const updateAssignmentAcceptedStatus = requireAuth(
-  async ({ session }, { id, accepted }: UpdateAcceptedStatusDto) => {
-    const userId = session.user.id;
+export const updateAssignmentAcceptedStatus = createServerAction(
+  requireAuth(
+    async ({ session }, { id, accepted }: UpdateAcceptedStatusDto) => {
+      const userId = session.user.id;
 
-    const assignment = await assignmentService.getAssignmentById(id);
+      const assignment = await assignmentService.getAssignmentById(id);
 
-    if (!assignment || assignment.userId !== userId) {
-      throw new Error('Unauthorized');
-    }
+      if (!assignment || assignment.userId !== userId) {
+        throw new ServerActionError('Unauthorized');
+      }
 
-    return assignmentService.updateAssignment(id, {
-      accepted,
-    });
-  },
+      return assignmentService.updateAssignment(id, {
+        accepted,
+      });
+    },
+  ),
 );

@@ -8,6 +8,7 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
+import { createServerActionHandler } from '@/lib/safe-action';
 
 import Link from 'next/link';
 
@@ -23,7 +24,9 @@ export default async function VerificationPage({
   const { token } = await searchParams;
 
   try {
-    await verifyUser(Array.isArray(token) || !token ? '' : token);
+    await createServerActionHandler(verifyUser)(
+      Array.isArray(token) || !token ? '' : token,
+    );
 
     message = 'Email verified successfully!';
     verified = true;

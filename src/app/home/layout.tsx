@@ -9,7 +9,10 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  await getCurrentUser();
+  const res = await getCurrentUser();
+  if (!res.success) {
+    console.error('error: ', res.error);
+  }
   return (
     <SidebarProvider defaultOpen>
       <AppSidebar />

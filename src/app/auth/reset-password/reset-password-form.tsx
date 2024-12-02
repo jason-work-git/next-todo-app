@@ -8,6 +8,9 @@ import { Token } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { resetPassword } from '@/actions/auth/controller';
 import { useRouter } from 'next/navigation';
+import { createServerActionHandler } from '@/lib/safe-action';
+
+const action = createServerActionHandler(resetPassword);
 
 export default function ChangePasswordForm({
   token,
@@ -16,7 +19,7 @@ export default function ChangePasswordForm({
 }) {
   const router = useRouter();
   const { mutate, isPending } = useMutation({
-    mutationFn: resetPassword,
+    mutationFn: action,
     onError: (error) => {
       toast.error(error.message);
     },

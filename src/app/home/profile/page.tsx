@@ -1,9 +1,10 @@
 import { LogoutButton } from '@/components/logout-button';
 import UpdateProfileForm from '@/components/update-profile-form';
 import { getCurrentUser } from '@/actions/auth/controller';
+import { createServerActionHandler } from '@/lib/safe-action';
 
 export default async function ProfilePage() {
-  const user = await getCurrentUser();
+  const user = await createServerActionHandler(getCurrentUser)();
 
   return (
     <div className="flex flex-col h-full gap-4 pb-4">

@@ -1,5 +1,6 @@
 import { addTask } from '@/actions/task/controller';
 import { AddTaskDto } from '@/actions/task/types';
+import { createServerActionHandler } from '@/lib/safe-action';
 import { Task } from '@prisma/client';
 import {
   useQueryClient,
@@ -32,7 +33,7 @@ export default function useAddTaskMutation({
   const queryClient = useQueryClient();
 
   const mutation = useMutation<Task, Error, Dto, TContext>({
-    mutationFn: addTask,
+    mutationFn: createServerActionHandler(addTask),
     onMutate: async (newTask) => {
       await queryClient.cancelQueries({ queryKey: ['tasks'] });
 

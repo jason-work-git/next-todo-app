@@ -3,6 +3,7 @@ import {
   updateAssignmentAcceptedStatus,
 } from '@/actions/assignment/controller';
 import { DetailedAssignment } from '@/actions/assignment/service';
+import { createServerActionHandler } from '@/lib/safe-action';
 import {
   useQueryClient,
   useMutation,
@@ -40,7 +41,7 @@ export default function useUpdateAssignmentAcceptedStatusMutation({
     UpdateAcceptedStatusDto,
     TContext
   >({
-    mutationFn: updateAssignmentAcceptedStatus,
+    mutationFn: createServerActionHandler(updateAssignmentAcceptedStatus),
     onMutate: async (newAssignmentData) => {
       await queryClient.cancelQueries({ queryKey: ['assignments'] });
 
