@@ -178,7 +178,7 @@ function TaskDrawerProvider({ children }: { children: React.ReactNode }) {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('taskId');
 
-    router.push(pathname + '?' + params.toString());
+    router.replace(pathname + '?' + params.toString());
   }, [pathname, router, searchParams]);
 
   return (

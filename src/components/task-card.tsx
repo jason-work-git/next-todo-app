@@ -35,7 +35,7 @@ export const TaskCard = ({
   };
 
   const onClick = () => {
-    router.push(`?taskId=${id}`);
+    router.replace(`?taskId=${id}`);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -44,8 +44,6 @@ export const TaskCard = ({
       onClick();
     }
   };
-
-  console.log(priority);
 
   return (
     <Card
