@@ -1,24 +1,25 @@
 'use client';
-import React, { ComponentProps } from 'react';
+
+import { ComponentProps } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { User } from '@prisma/client';
-import { updateUser } from '@/actions/user/controller';
-import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { LoadingButton } from './ui/loading-button';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import ResetPasswordDrawer from './reset-password-drawer';
+import useUpdateUser from '@/hooks/use-update-user';
 
-export type Props = ComponentProps<'form'> & {
-  user: Pick<User, 'name' | 'email'>;
+type Props = ComponentProps<'form'> & {
+  user: Pick<User, 'name' | 'email' | 'image'>;
 };
 
 const UpdateProfileForm: React.FC<Props> = ({ user, ...rest }) => {
-  const { mutate, isPending } = useMutation({
-    mutationFn: updateUser,
-    onError: (error) => toast.error(error.message),
+  const { updateUser, isPending } = useUpdateUser({
+    onError: (error) =>
+      toast.error('Failed to update user info', {
+        description: error.message,
+      }),
     onSuccess: () => toast.success('Profile updated successfully'),
   });
 
@@ -27,7 +28,7 @@ const UpdateProfileForm: React.FC<Props> = ({ user, ...rest }) => {
     const data = new FormData(e.currentTarget);
     const name = data.get('name') as string;
 
-    mutate({ name });
+    updateUser({ name });
     rest.onSubmit?.(e);
   };
 
@@ -42,23 +43,36 @@ const UpdateProfileForm: React.FC<Props> = ({ user, ...rest }) => {
         <Input name="name" defaultValue={user.name ?? ''} />
       </Label>
 
-      <Label className="flex flex-col gap-2">
+      <Label
+        title="You can't change your email"
+        className="flex flex-col gap-2"
+      >
         Email
         <Input name="email" value={user.email} disabled />
       </Label>
 
-      <ResetPasswordDrawer
-        userEmail={user.email}
-        trigger={
-          <Button type="button" variant="outline">
-            Reset password
-          </Button>
-        }
-      />
+      <div className="flex flex-wrap gap-4">
+        <ResetPasswordDrawer
+          userEmail={user.email}
+          trigger={
+            <Button
+              type="button"
+              className="w-full sm:w-auto"
+              variant="outline"
+            >
+              Reset password
+            </Button>
+          }
+        />
 
-      <LoadingButton className="items-end" type="submit" isLoading={isPending}>
-        Save
-      </LoadingButton>
+        <Button
+          className="items-end w-full sm:w-auto"
+          type="submit"
+          isLoading={isPending}
+        >
+          Save
+        </Button>
+      </div>
     </form>
   );
 };
