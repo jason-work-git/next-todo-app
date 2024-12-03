@@ -28,6 +28,7 @@ import { useLogout } from '@/hooks/use-logout';
 import { Skeleton } from '@/components/ui/skeleton';
 import useUserQuery from '@/hooks/use-user-query';
 import { AddTaskFlow } from '@/components/add-task-flow';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Content = () => {
   const { newAssignmentsCount, isLoading } = useAssignments();
@@ -118,7 +119,12 @@ const Footer = () => {
                 {isUserLoading ? (
                   <Skeleton className="size-8 shrink-0" />
                 ) : (
-                  <UserIcon className="!size-6 shrink-0" />
+                  <Avatar className="size-8 rounded-md">
+                    <AvatarImage src={user?.image || undefined} />
+                    <AvatarFallback>
+                      <UserIcon />
+                    </AvatarFallback>
+                  </Avatar>
                 )}
                 <div className="flex flex-col text-sm leading-tight">
                   {isUserLoading ? (
