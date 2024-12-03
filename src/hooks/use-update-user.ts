@@ -1,6 +1,10 @@
 import { NormalizedUser, updateUser } from '@/actions/user/controller';
 import { UpdateUserDto } from '@/actions/user/types';
-import { useMutation, UseMutationOptions } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query';
 
 type Options = Omit<
   UseMutationOptions<
@@ -11,13 +15,18 @@ type Options = Omit<
   'mutationFn'
 >;
 
-export default function useUpdateUser(options: Options = {}) {
+export default function useUpdateUser({ onSettled, ...options }: Options = {}) {
+  const queryClient = useQueryClient();
   const { mutate, mutateAsync, ...mutation } = useMutation<
     NormalizedUser,
     Error,
     Pick<UpdateUserDto, 'name' | 'password' | 'image'>
   >({
     mutationFn: updateUser,
+    onSettled: (data, error, vars, ctx) => {
+      queryClient.refetchQueries({ queryKey: ['user'] });
+      onSettled?.(data, error, vars, ctx);
+    },
     ...options,
   });
 
