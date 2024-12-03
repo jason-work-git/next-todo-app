@@ -12,7 +12,11 @@ export type Props = Omit<ConfirmFlowProps, 'title' | 'trigger'> & {
   userEmail: User['email'];
 };
 
-const ResetPasswordDrawer: React.FC<Props> = ({ userEmail, ...rest }) => {
+const ResetPasswordDrawer: React.FC<Props> = ({
+  userEmail,
+  trigger,
+  ...rest
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { requestPasswordResetAsync, isPending } = useRequestPasswordReset();
 
@@ -29,7 +33,7 @@ const ResetPasswordDrawer: React.FC<Props> = ({ userEmail, ...rest }) => {
       title="Are you sure you want to reset your password?"
       description="We will send a password reset link to your email address."
       confirmText="Yes, reset it"
-      trigger={<Button variant="outline">Reset password</Button>}
+      trigger={trigger ?? <Button variant="outline">Reset password</Button>}
       isLoading={isPending}
       onConfirm={resetPassword}
       {...rest}
