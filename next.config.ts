@@ -9,7 +9,6 @@ const nextConfig: NextConfig = {
         hostname: '**',
       },
     ],
-    domains: ['googleusercontent.com', 'discord.com', 'github.com'],
   },
 };
 
