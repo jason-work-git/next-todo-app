@@ -3,8 +3,10 @@ import UpdateProfileForm from '@/components/update-profile-form';
 import { getCurrentUser } from '@/actions/auth/controller';
 import { createServerActionHandler } from '@/lib/safe-action';
 
+const getUser = createServerActionHandler(getCurrentUser);
+
 export default async function ProfilePage() {
-  const user = await createServerActionHandler(getCurrentUser)();
+  const user = await getUser();
 
   return (
     <div className="flex flex-col h-full gap-4 pb-4">

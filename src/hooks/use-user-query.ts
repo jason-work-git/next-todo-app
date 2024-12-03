@@ -6,5 +6,6 @@ export default function useUserQuery() {
   return useQuery({
     queryFn: createServerActionHandler(getCurrentUser),
     queryKey: ['user'],
+    throwOnError: false,
   });
 }

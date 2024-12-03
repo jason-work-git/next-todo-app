@@ -2,7 +2,7 @@
 
 import { hash } from 'bcryptjs';
 import { AuthError } from 'next-auth';
-import { signIn, signOut } from '@/auth';
+import { signIn } from '@/auth';
 import { isRedirectError } from 'next/dist/client/components/redirect';
 import { Token, TokenType, User } from '@prisma/client';
 import { userService } from '@/actions/user/service';
@@ -21,7 +21,6 @@ export const getCurrentUser = createServerAction(
     const user = await userService.getUserById(session.user.id);
 
     if (!user) {
-      await signOut();
       throw new ServerActionError('User not found.');
     }
 

@@ -1,6 +1,8 @@
 'use client';
 
+import { getCurrentUser } from '@/actions/auth/controller';
 import { Button } from '@/components/ui/button';
+import { signOut } from 'next-auth/react';
 import { useEffect } from 'react';
 
 export default function Error({
@@ -14,6 +16,15 @@ export default function Error({
     console.error(error);
   }, [error]);
 
+  const onClick = async () => {
+    const user = await getCurrentUser();
+    if (!user.success) {
+      await signOut();
+    }
+
+    reset();
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-dvh">
       <h1 className="text-4xl text-center font-bold text-error mb-3">
@@ -23,7 +34,7 @@ export default function Error({
         We are so sorry, but something went wrong. If you want you can try to
         reload the page.
       </p>
-      <Button onClick={() => reset()}>Try again</Button>
+      <Button onClick={onClick}>Try again</Button>
     </div>
   );
 }
