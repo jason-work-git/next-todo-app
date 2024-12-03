@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 const action = createServerActionHandler(requestPasswordReset);
 
 export function useRequestPasswordReset() {
-  const mutation = useMutation({
+  const { mutate, mutateAsync, ...mutation } = useMutation({
     mutationFn: action,
     onSuccess: () => {
       toast.success('Password reset link was sent to your email');
@@ -18,7 +18,7 @@ export function useRequestPasswordReset() {
 
   return {
     ...mutation,
-    requestPasswordReset: mutation.mutate,
-    requestPasswordResetAsync: mutation.mutateAsync,
+    requestPasswordReset: mutate,
+    requestPasswordResetAsync: mutateAsync,
   };
 }
